@@ -1,0 +1,9 @@
+This project is used for collecting OFDM examples in USRP UHD.
+
+(1) Example 1: Gnuradio master repository
+http://gnuradio.org/cgit/gnuradio.git/tree/gr-digital/examples/ofdm
+
+(2) Example 2: Porting RawOFDM to USRP UHD
+Find RawOFDM: http://people.csail.mit.edu/szym/rawofdm/README.html
+
+(3) Example 3: Porting FTW to USRP UHD
