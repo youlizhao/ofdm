@@ -15,6 +15,7 @@ http://gnuradio.org/cgit/gnuradio.git/tree/gr-digital/examples/ofdm
 For my git version, after installation, I need to move ftw.py from */site-packages to */dist-packages.
 sudo cp -r /opt/gnuradio/git/lib/python2.6/site-packages/gnuradio/ /opt/gnuradio/git/lib/python2.6/dist-packages/
 
-3. RawOFDM
-Find RawOFDM: http://people.csail.mit.edu/szym/rawofdm/README.html
+See src/examples/ftw_ofdm_tx_uhd.py
+./ftw_ofdm_tx_uhd.py -a addr=192.168.10.2 --tx-freq 5.18G -n 1 -W 20e6
 
+- Tested using USRP2 + XCVR2450, and Wireshark
