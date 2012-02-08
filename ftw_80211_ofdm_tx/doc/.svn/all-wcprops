@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc/Makefile.in
+END
+src_lib_Makefile_1.am
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc/src_lib_Makefile_1.am
+END
+howto_1.i
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc/howto_1.i
+END
+src_lib_Makefile_2.am
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc/src_lib_Makefile_2.am
+END
+qa_howto_1.py
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc/qa_howto_1.py
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc/Makefile.am
+END
+howto-write-a-block.xml
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc/howto-write-a-block.xml
+END
+make_numbered_listing.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/doc/make_numbered_listing.py
+END

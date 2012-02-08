@@ -298,7 +298,7 @@ def conv_encoder(pkt, Length, regime, N_cbps, N_bpsc, N_sym, N_rate):
 	if (regime == "1" or regime== "3" or regime == "5"):
 		encoded = encoded[0:48 + Real_num_of_bits]
 		encoded = "".join(encoded)
-		#print conv_1_0_string_to_packed_binary_string(encoded)
+		
 		return conv_1_0_string_to_packed_binary_string(encoded)
 
 	elif (regime == "2" or regime == "4" or regime == "6" or regime == "8"):

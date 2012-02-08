@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw
+END
+ftw_crc32.cc
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_crc32.cc
+END
+ftw_crc32.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_crc32.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/Makefile.in
+END
+ftw_repetition.cc
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_repetition.cc
+END
+ftw.i
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw.i
+END
+ftw_repetition.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_repetition.h
+END
+ftw_repetition.h.original
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_repetition.h.original
+END
+ftw_ofdm_mapper.cc
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_ofdm_mapper.cc
+END
+Makefile.swig.gen
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/Makefile.swig.gen
+END
+ftw_ofdm_cmap_cc.cc
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_ofdm_cmap_cc.cc
+END
+ftw_ofdm_mapper.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_ofdm_mapper.h
+END
+ftw_ofdm_preamble.cc
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_ofdm_preamble.cc
+END
+ftw_ofdm_cmap_cc.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_ofdm_cmap_cc.h
+END
+ftw_ofdm_preamble.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_ofdm_preamble.h
+END
+ftw_ofdm_pilot_cc.cc
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_ofdm_pilot_cc.cc
+END
+ftw_repetition.original
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_repetition.original
+END
+ftw_ofdm_pilot_cc.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_ofdm_pilot_cc.h
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/Makefile.am
+END
+ftw_zerogap.cc
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_zerogap.cc
+END
+ftw_zerogap.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/ftw/ftw_zerogap.h
+END

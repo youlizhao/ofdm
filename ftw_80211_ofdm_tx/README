@@ -1,0 +1,179 @@
+#
+# Copyright 2005, 2006 Free Software Foundation, Inc.
+# 
+# This file is part of GNU Radio
+# 
+# GNU Radio is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+# 
+# GNU Radio is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with GNU Radio; see the file COPYING.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street,
+# Boston, MA 02110-1301, USA.
+# 
+
+PROJECT DESCRIPTION:
+####################
+
+This encoder is able to generate and transmit standard-compliant 
+IEEE802.11a, IEEE802.11g or IEEE802.11p (draft) frames 
+using the GNURadio framework. 
+ 
+The package consists of python scripts and C++ sourcecode for all
+required processing steps. Also included is the encoder script
+(for MATLAB, in the src/matlab directory) that was written in the 
+first phase of development to alleviate the debugging of the 
+GNURadio encoder.
+
+The encoder takes the payload of the mac-layer service data unit as 
+input and prepends a static MAC header (for a unicast DATA frame, see 
+ftw_packet_utils.py for further details). After calulating and appending
+the CRC32 bits it generates the OFDM modulated frame in digital complex
+baseband representation, initializes the USRP2 and pushes the corresponding
+block of samples to the USRP2 floating-point sink. 
+
+During the development-process we noticed that if the block of samples is not
+followed by a small number of zero-samples most receivers have problems
+decoding. In case of sending multiple frames consecutively this is probably due
+to the SIFS/DIFS restrictions. But we also observed this problem when
+sending only a single copy. So we decided to append a few zero samples at the 
+end of each frame (done by the "zerogap" module in the chain).
+
+In order to be able to transmit the frame appropriately you'll need an 
+USRP2 equipped with a daughterboard that supports the respective frequencies:
+
+2.4GHz (for 11g) XCVR2450 or RFX2400
+5.2GHz (for 11a) XCVR2450
+5.9GHz (for 11p) XCVR2450
+
+It was tested with XCVR2450 only, but should also work with RFX2400.
+
+Additional version-information:
+
+Tested on: 
+Ubuntu 9.10 64bitKernel Version: 2.6.31-16-genericPlatform: x86_64GNURadio Version: 3.2.2USRP2 HW revision number: 0x0301 (via find_usrps)USRP2 Firmware revision number: r11370, IMPORTANT NOTE SEE BELOWDaughterboard model: XCVR2450Daughterboard revision number: 427
+
+
+COMPILATION:
+############
+
+This package requires that gnuradio-core is already installed.  It
+also depends on some GNU Radio prerequisites, such as boost.
+
+If you're building from CVS, you'll need to use this sequence, since
+CVS doesn't contain configure or the generated Makefiles.
+
+  $ ./bootstrap
+  $ ./configure
+  $ make
+
+To build it from the tarball use the normal recipe:
+
+  $ ./configure
+  $ make
+
+
+
+INSTALLATION:
+#############
+
+  $ sudo make install
+
+
+
+USAGE:
+######
+
+sudo ftw_ofdm_tx.py <Options>
+
+Options:
+  -h, --help            show this help message and exit
+  -e INTERFACE, --interface=INTERFACE
+                        set ethernet interface, [default=eth0]
+  -m MAC_ADDR, --mac-addr=MAC_ADDR
+                        set USRP2 MAC address, [default=auto-select]
+  -f FREQ, --freq=FREQ  set USRP2 carrier frequency, [default=2412000000.0]
+  -i INTERP, --interp=INTERP
+                        set USRP2 interpolation factor, [default=5]
+                        5  -> 802.11a/g, OFDM-symbolduration=4us,
+                        10 -> 802.11p, OFDM-symbolduration=8us
+  -g GAIN, --gain=GAIN  set USRP2 Tx GAIN in [dB] [default=10]
+  --regime=REGIME       set OFDM coderegime:    [default=1]
+                        1 -> 6 (3) Mbit/s (BPSK r=0.5),
+                        2 -> 9 (4.5) Mbit/s (BPSK r=0.75),
+                        3 -> 12 (6) Mbit/s (QPSK r=0.5),
+                        4 -> 18 (9) Mbit/s (QPSK r=0.75),
+                        5 -> 24 (12) Mbit/s (QAM16 r=0.5),
+                        6 -> 36 (18) Mbit/s (QAM16 r=0.75),
+                        7 -> 48 (24) Mbit/s (QAM64 r=0.66),
+                        8 -> 54 (27) Mbit/s (QAM64 r=0.75)
+  -n NORM, --norm=NORM  set gain factor for complex baseband floats
+                        [default=0.3]
+  -s, --swapIQ          swap IQ components before sending to USRP2 sink
+                        [default=False]
+  -r REPETITION, --repetition=REPETITION
+                        set number of frame-copies to send, 0=infinite
+                        [default=1]
+  -l, --log             write debug-output of individual blocks to disk
+  -p PAYLOAD, --payload=PAYLOAD
+                        payload ASCII-string to send, [default=HelloWorld]
+
+
+
+###################################################################
+IMPORTANT NOTE:
+###################################################################
+If your USRP2 firmware version is OLDER THAN r11370 
+(http://gnuradio.org/releases/usrp2-bin/trunk) then you need to 
+use the --swapIQ switch.
+
+Reason: older firmware versions have a nasty bug that swaps inphase 
+and quadrature part in the TX path -  so the encoder should pre-swap 
+those in order to compensate for this. 
+
+The most recent precompiled firmware images (without this bug) can 
+be downloaded and flashed like this:
+
+wget http://gnuradio.org/releases/usrp2-bin/trunk/txrx.bin
+wget http://gnuradio.org/releases/usrp2-bin/trunk/u2_rev3.bin
+
+sudo ./usrp2/firmware/u2_flash_tool --dev=<cardreader name> -t s/w txrx.bin -w
+sudo ./usrp2/firmware/u2_flash_tool --dev=<cardreader name> -t fpga u2_rev3.bin -w
+
+(in our case the sdcard reader was /dev/sdc)
+
+
+
+EXAMPLE USAGE:
+##############
+
+Say you want to transmit an IEEE802.11g frame using the lowest modulation 
+regime (BPSK, 6Mbit/s) on WiFi channel 1 (2412MHz) you need to use:
+
+sudo ftw_ofdm_tx.py --interface=eth0 --freq=2.412e9 --interp=5 --payload="some arbitrary text as MSDU ASCII payload" --regime=1
+
+For switching to 11a it suffices to use a different carrier 
+frequency around 5.2GHz - 5.8GHz.
+
+For 11p you also have to switch to --interp=10 since the symbol-time needs
+to be twice as long for this standard.
+
+
+
+TODO:
+#####
+
+1.) Port the MATLAB encoder to Octave
+2.) Streamline and speedup the encoder as a whole
+3.) Add basic CSMA/CA functionality
+
+Help is very much appreciated and welcome!!
+
+ 

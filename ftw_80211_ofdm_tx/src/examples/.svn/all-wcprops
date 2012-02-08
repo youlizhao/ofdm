@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/examples
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/examples/Makefile.in
+END
+ftw_ofdm_tx.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/examples/ftw_ofdm_tx.py
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/examples/Makefile.am
+END
+ftw_ofdm.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/examples/ftw_ofdm.py
+END
+ftw_packet_utils.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/406/projects/ftw_80211_ofdm_tx/trunk/src/examples/ftw_packet_utils.py
+END
