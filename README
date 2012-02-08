@@ -1,19 +1,20 @@
 This project is used for collecting OFDM examples in UHD.
 
-1. Project
-(1) Project 1: Gnuradio master repository
+1. benchmark_txrx.py
 http://gnuradio.org/cgit/gnuradio.git/tree/gr-digital/examples/ofdm
 
-(2) Project 2: Porting RawOFDM to USRP UHD
-Find RawOFDM: http://people.csail.mit.edu/szym/rawofdm/README.html
-
-(3) Project 3: Porting FTW to USRP UHD
-
-2. Examples
-(1) benchmark_txrx.py
 ./benchmark_txrx.py --tx-freq 2.485G --rx-freq 2.485G -t addr=192.168.10.2 -r addr=192.168.10.2 -v
+
 - Just copy it to /gr-digital/examples/ofdm/, and run
 - Tested using USRP2 + RFX2400, does not work with XCVR2450
 - Quick example to setup a Tx/Rx node
 - We can use *ONE* USRP2 to setup 
 - We can use seperate Tx/Rx freq
+
+2. FTW
+
+
+
+3. RawOFDM
+Find RawOFDM: http://people.csail.mit.edu/szym/rawofdm/README.html
+
