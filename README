@@ -12,8 +12,8 @@ http://gnuradio.org/cgit/gnuradio.git/tree/gr-digital/examples/ofdm
 - We can use seperate Tx/Rx freq
 
 2. FTW
-
-
+For my git version, after installation, I need to move ftw.py from */site-packages to */dist-packages.
+sudo cp -r /opt/gnuradio/git/lib/python2.6/site-packages/gnuradio/ /opt/gnuradio/git/lib/python2.6/dist-packages/
 
 3. RawOFDM
 Find RawOFDM: http://people.csail.mit.edu/szym/rawofdm/README.html
