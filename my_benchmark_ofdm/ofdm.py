@@ -308,6 +308,10 @@ class _queue_watcher_thread(_threading.Thread):
     def run(self):
         while self.keep_running:
             msg = self.rcvd_pktq.delete_head()
+	    if msg.timestamp_valid():
+		print ".... PKT TIMESTAMP:", msg.preamble_sec, msg.preamble_frac_sec
+	    else:
+		print ".... PKT NO TIMESTAMP"
             ok, payload = ofdm_packet_utils.unmake_packet(msg.to_string())
             if self.callback:
                 self.callback(ok, payload)

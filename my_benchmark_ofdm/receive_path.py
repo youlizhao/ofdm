@@ -21,10 +21,12 @@
 
 from gnuradio import gr
 from gnuradio import eng_notation
-from gnuradio import digital
 
 import copy
 import sys
+
+# from current dir
+import ofdm
 
 # /////////////////////////////////////////////////////////////////////////////
 #                              receive path
@@ -45,7 +47,7 @@ class receive_path(gr.hier_block2):
         self._rx_callback = rx_callback      # this callback is fired when there's a packet available
 
         # receiver
-        self.ofdm_rx = digital.ofdm_demod(options,
+        self.ofdm_rx = ofdm.ofdm_demod(options,
                                           callback=self._rx_callback)
 
         # Carrier Sensing Blocks
