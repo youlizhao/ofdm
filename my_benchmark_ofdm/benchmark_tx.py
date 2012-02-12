@@ -111,9 +111,10 @@ def main():
         if options.discontinuous and pktno % 5 == 4:
             time.sleep(1)
         pktno += 1
-	time.sleep(10)
+	time.sleep(2)
         
     send_pkt(eof=True)
+    
     tb.wait()                       # wait for it to finish
 
 if __name__ == '__main__':

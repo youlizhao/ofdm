@@ -151,7 +151,9 @@ class uhd_transmitter(uhd_interface, gr.hier_block2):
         print "Antenna:     %s"    % (self._ant)
         print "Subdev Sec:  %s"    % (self._spec)
 
-
+    def get_usrp_time(self):
+	time = self.u.get_time_now()
+	return time.get_real_secs(), time.get_frac_secs()
 
 #-------------------------------------------------------------------#
 #   RECEIVER
@@ -205,3 +207,6 @@ class uhd_receiver(uhd_interface, gr.hier_block2):
         print "Antenna:     %s"    % (self._ant)
         print "Subdev Sec:  %s"    % (self._spec)
 
+    def get_usrp_time(self):
+	time = self.u.get_time_now()
+	return time.get_real_secs(), time.get_frac_secs()

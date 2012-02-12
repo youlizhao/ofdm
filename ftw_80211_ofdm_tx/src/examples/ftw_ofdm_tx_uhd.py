@@ -184,9 +184,9 @@ def main():
 
     # send frame        
     counter = 0
-    while counter < 2:
+    while counter < 1:
        send_pkt(my_msg , eof = False)
-       time.sleep(1)
+       time.sleep(4)
        counter = counter + 1
 
     print "End of Transmission"

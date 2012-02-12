@@ -25,6 +25,7 @@ from gnuradio import digital
 
 import copy
 import sys
+import ofdm
 
 # /////////////////////////////////////////////////////////////////////////////
 #                              transmit path
@@ -45,7 +46,7 @@ class transmit_path(gr.hier_block2):
         self._verbose      = options.verbose      # turn verbose mode on/off
         self._tx_amplitude = options.tx_amplitude # digital amp sent to radio
 
-        self.ofdm_tx = digital.ofdm_mod(options,
+        self.ofdm_tx = ofdm.ofdm_mod(options,
                                         msgq_limit=4,
                                         pad_for_usrp=False)
 

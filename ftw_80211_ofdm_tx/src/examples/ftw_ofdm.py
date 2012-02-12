@@ -162,7 +162,8 @@ class ofdm_mod(gr.hier_block2):
         #	self.preamble, self.zerogap, self.v2s)
                 
 	#elif options.repetition > 1:
-	self.connect(self.pilot, self.cmap, self.ifft, self.cp_adder, self.scale, self.s2v, self.preamble, self.zerogap, self.repeat, self.v2s)
+#	self.connect(self.pilot, self.cmap, self.ifft, self.cp_adder, self.scale, self.s2v, self.preamble, self.zerogap, self.repeat, self.v2s)
+	self.connect(self.pilot, self.cmap, self.ifft, self.cp_adder, self.scale, self.s2v, self.preamble, self.zerogap, self.v2s)
 	#else:
 	#	print"Error: repetiton must be a integer number >= 1 \n"
 	#	sys.exit(1)

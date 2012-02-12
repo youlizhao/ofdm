@@ -69,9 +69,9 @@ int ftw_repetition::general_work (int noutput_items,
     no++;			
     ni++;
   }
-  counter++;
-  if ((counter==d_repetition)&&(d_repetition!=0))
-    consume_each(d_N_symbols + 5 + 13);
+//  counter++;
+//  if ((counter==d_repetition)&&(d_repetition!=0))
+//    consume_each(d_N_symbols + 5 + 13);
   return no ;
 }
 

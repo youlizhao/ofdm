@@ -45,6 +45,7 @@ class my_top_block(gr.top_block):
         gr.top_block.__init__(self)
 
 	### Rx Side ###
+
         if(options.rx_freq is not None):
             self.source = uhd_receiver(options.args_rx,
                                        options.bandwidth,
@@ -64,7 +65,6 @@ class my_top_block(gr.top_block):
 
         
 	## Tx Side ###
-#	"""
 	if(options.tx_freq is not None):
             self.sink = uhd_transmitter(options.args_tx,
                                         options.bandwidth,
@@ -75,7 +75,7 @@ class my_top_block(gr.top_block):
             self.sink = gr.file_sink(gr.sizeof_gr_complex, options.to_file)
         else:
             self.sink = gr.null_sink(gr.sizeof_gr_complex)
-#	"""
+
 
         # do this after for any adjustments to the options that may
         # occur in the sinks (specifically the UHD sink)
@@ -235,10 +235,10 @@ def main():
         print "Warning: failed to enable realtime scheduling"
 
     tb.start()                      # start flow graph
-    time.sleep(2)		    # setup all blocks
+    time.sleep(5)		    # setup all blocks
 
     ###########################################################################
-#    """
+
     # generate and send packets
     nbytes = int(1e6 * options.megabytes)
     n = 0
@@ -262,8 +262,8 @@ def main():
         pktno += 1
         
     send_pkt(eof=True)
-
     """
+    
     counter = 1
     while counter < 10:
 	print "RX: carrier sense value", tb.carrier_sensed_value()

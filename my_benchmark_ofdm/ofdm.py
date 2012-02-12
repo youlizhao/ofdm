@@ -74,11 +74,15 @@ class ofdm_mod(gr.hier_block2):
         # hard-coded known symbols
         preambles = (ksfreq,)
                 
+#	print preambles
+
         padded_preambles = list()
         for pre in preambles:
             padded = self._fft_length*[0,]
             padded[zeros_on_left : zeros_on_left + self._occupied_tones] = pre
             padded_preambles.append(padded)
+#	print
+#	print padded_preambles
             
         symbol_length = options.fft_length + options.cp_length
         
@@ -309,12 +313,17 @@ class _queue_watcher_thread(_threading.Thread):
         while self.keep_running:
             msg = self.rcvd_pktq.delete_head()
 	    if msg.timestamp_valid():
-		print ".... PKT TIMESTAMP:", msg.preamble_sec, msg.preamble_frac_sec
+	    	secs = msg.preamble_sec()
+	    	frac_secs = msg.preamble_frac_sec()
+		#print ".... PKT TIMESTAMP:", msg.preamble_sec(), msg.preamble_frac_sec()
 	    else:
-		print ".... PKT NO TIMESTAMP"
+		secs=0
+		frac_secs=0
+		#print ".... PKT NO TIMESTAMP"
             ok, payload = ofdm_packet_utils.unmake_packet(msg.to_string())
+	    frac_secs = msg.preamble_frac_sec()
             if self.callback:
-                self.callback(ok, payload)
+                self.callback(ok, payload,secs,frac_secs)
 
 # Generating known symbols with:
 # i = [2*random.randint(0,1)-1 for i in range(4512)]
