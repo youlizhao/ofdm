@@ -134,13 +134,32 @@ def main():
     n_rcvd = 0
     n_right = 0
 
-    def rx_callback(ok, payload):
+#    def rx_callback(ok, payload):
+#        global n_rcvd, n_right
+#        n_rcvd += 1
+#        (pktno,) = struct.unpack('!H', payload[0:2])
+#        if ok:
+#            n_right += 1
+#        print "ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (ok, pktno, n_rcvd, n_right)
+
+#        if 0:
+#            printlst = list()
+#            for x in payload[2:]:
+#                t = hex(ord(x)).replace('0x', '')
+#                if(len(t) == 1):
+#                    t = '0' + t
+#                printlst.append(t)
+#            printable = ''.join(printlst)
+
+#            print printable
+#            print "\n"
+    def rx_callback(ok, payload, secs, frac_secs):
         global n_rcvd, n_right
         n_rcvd += 1
         (pktno,) = struct.unpack('!H', payload[0:2])
         if ok:
             n_right += 1
-        print "ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (ok, pktno, n_rcvd, n_right)
+        print "timestamp: %f \t ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (secs+frac_secs, ok, pktno, n_rcvd, n_right)
 
         if 0:
             printlst = list()
@@ -153,6 +172,7 @@ def main():
 
             print printable
             print "\n"
+
 
     def send_pkt(payload='', eof=False):
         return tb.txpath.send_pkt(payload, eof)

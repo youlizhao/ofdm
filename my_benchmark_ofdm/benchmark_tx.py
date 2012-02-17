@@ -20,6 +20,12 @@
 # Boston, MA 02110-1301, USA.
 # 
 
+#
+# @author: modified by lzyou@ie.cuhk.edu.hk
+# @date  : Feb. 17, 2012
+# @func  : Test of OFDM TX
+#
+
 from gnuradio import gr
 from gnuradio import eng_notation
 from gnuradio.eng_option import eng_option
@@ -108,10 +114,9 @@ def main():
         send_pkt(payload)
         n += len(payload)
         sys.stderr.write('.')
-        if options.discontinuous and pktno % 5 == 4:
+        if options.discontinuous:
             time.sleep(1)
         pktno += 1
-	time.sleep(2)
         
     send_pkt(eof=True)
     

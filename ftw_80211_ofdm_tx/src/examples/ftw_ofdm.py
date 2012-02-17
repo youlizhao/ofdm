@@ -198,7 +198,21 @@ class ofdm_mod(gr.hier_block2):
 	    (pkt_scrambled,Length) = ofdm_packet_utils.scrambler(pkt,Length)			
 	    pkt_coded = ofdm_packet_utils.conv_encoder(pkt_scrambled, Length, self._regime, N_cbps, N_bpsc, N_sym, N_rate)	
 	    pkt_interleaved = ofdm_packet_utils.interleaver(pkt_coded , self._regime, N_cbps, N_bpsc)
+            print
+            print conv_packed_binary_string_to_1_0_string(pkt_interleaved)
 	    msg = gr.message_from_string(pkt_interleaved) 
 
         self._pkt_input.msgq().insert_tail(msg)
 
+def conv_packed_binary_string_to_1_0_string(s):
+    """
+    '\xAF' --> '10101111'
+    """
+    r = []
+    for ch in s:
+        x = ord(ch)
+        for i in range(7,-1,-1):
+            t = (x >> i) & 0x1
+            r.append(t)
+
+    return ''.join(map(lambda x: chr(x + ord('0')), r))

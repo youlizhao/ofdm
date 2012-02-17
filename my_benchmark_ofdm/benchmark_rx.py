@@ -20,6 +20,12 @@
 # Boston, MA 02110-1301, USA.
 # 
 
+#
+# @author: modified by lzyou@ie.cuhk.edu.hk
+# @date  : Feb. 17, 2012
+# @func  : Test of OFDM RX; Adding timestamp interface
+#
+
 from gnuradio import gr, blks2
 from gnuradio import eng_notation
 from gnuradio.eng_option import eng_option
@@ -73,7 +79,7 @@ def main():
         (pktno,) = struct.unpack('!H', payload[0:2])
         if ok:
             n_right += 1
-        print "timestamp: %f ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (secs+frac_secs, ok, pktno, n_rcvd, n_right)
+        print "timestamp: %f \t ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (secs+frac_secs, ok, pktno, n_rcvd, n_right)
 
         if 0:
             printlst = list()

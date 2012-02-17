@@ -184,12 +184,22 @@ def ftw_make(payload, regime, symboltime):
 
 	PLCP_HEADER = SIGNAL_FIELD + SERVICE
 	
-	MPDU = make_MPDU (packet)	
+	MPDU = make_MPDU (packet)
+ #       print string_to_hex_list(MPDU)	
 	
 	MPDU_with_crc32 = gen_and_append_crc32(MPDU , packet) 
 
 	Length = len(MPDU_with_crc32)
-	
+
+        print conv_packed_binary_string_to_1_0_string(PLCP_HEADER), len(PLCP_HEADER)
+        print string_to_hex_list(PLCP_HEADER)
+        print
+        print conv_packed_binary_string_to_1_0_string(MPDU_with_crc32), len(MPDU_with_crc32)
+        print string_to_hex_list(MPDU_with_crc32)
+        print
+        print conv_packed_binary_string_to_1_0_string(TAIL_and_PAD), len(TAIL_and_PAD)
+	print string_to_hex_list(TAIL_and_PAD)
+
 	return PLCP_HEADER + MPDU_with_crc32 + TAIL_and_PAD , Length
 
 

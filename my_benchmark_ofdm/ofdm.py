@@ -130,7 +130,7 @@ class ofdm_mod(gr.hier_block2):
             self.connect(self.cp_adder, gr.file_sink(gr.sizeof_gr_complex,
                                                      "ofdm_cp_adder_c.dat"))
 
-    def send_pkt(self, payload='', eof=False):
+    def send_pkt(self, payload='', eof=False, timestamp=False, secs=0, frac_secs=0):
         """
         Send the payload.
 
@@ -147,6 +147,8 @@ class ofdm_mod(gr.hier_block2):
             
             #print "pkt =", string_to_hex_list(pkt)
             msg = gr.message_from_string(pkt)
+            if timestamp:
+                msg.set_timestamp(long(secs), frac_secs)
         self._pkt_input.msgq().insert_tail(msg)
 
     def add_options(normal, expert):
@@ -313,15 +315,14 @@ class _queue_watcher_thread(_threading.Thread):
         while self.keep_running:
             msg = self.rcvd_pktq.delete_head()
 	    if msg.timestamp_valid():
-	    	secs = msg.preamble_sec()
-	    	frac_secs = msg.preamble_frac_sec()
+	    	secs = msg.timestamp_sec()
+	    	frac_secs = msg.timestamp_frac_sec()
 		#print ".... PKT TIMESTAMP:", msg.preamble_sec(), msg.preamble_frac_sec()
 	    else:
 		secs=0
 		frac_secs=0
 		#print ".... PKT NO TIMESTAMP"
             ok, payload = ofdm_packet_utils.unmake_packet(msg.to_string())
-	    frac_secs = msg.preamble_frac_sec()
             if self.callback:
                 self.callback(ok, payload,secs,frac_secs)
 
