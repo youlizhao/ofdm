@@ -27,6 +27,7 @@
 #include "ftw_ofdm_cmap_cc.h"
 #include "ftw_ofdm_mapper.h"
 #include "ftw_ofdm_pilot_cc.h"
+#include "ftw_pnc_ofdm_pilot_cc.h"
 #include "ftw_ofdm_preamble.h"
 #include "ftw_repetition.h"
 #include "ftw_zerogap.h"
@@ -54,6 +55,18 @@ class ftw_ofdm_pilot_cc : public gr_block
 {
 private:
   ftw_ofdm_pilot_cc (int tones);
+};
+
+//-----------------------------------------------------------------
+
+GR_SWIG_BLOCK_MAGIC(ftw,pnc_ofdm_pilot_cc);
+
+ftw_pnc_ofdm_pilot_cc_sptr ftw_make_pnc_ofdm_pilot_cc (int tones, int user);
+
+class ftw_pnc_ofdm_pilot_cc : public gr_block
+{
+private:
+  ftw_pnc_ofdm_pilot_cc (int tones, int user);
 };
 
 //-----------------------------------------------------------------

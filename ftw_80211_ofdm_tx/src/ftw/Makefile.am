@@ -27,6 +27,7 @@ grinclude_HEADERS =             \
 	ftw_ofdm_cmap_cc.h      \
 	ftw_ofdm_mapper.h       \
 	ftw_ofdm_pilot_cc.h     \
+        ftw_pnc_ofdm_pilot_cc.h \
 	ftw_ofdm_preamble.h     \
 	ftw_repetition.h        \
 	ftw_zerogap.h
@@ -54,6 +55,7 @@ ftw_la_swig_sources =          \
 	ftw_ofdm_cmap_cc.cc      \
 	ftw_ofdm_mapper.cc       \
 	ftw_ofdm_pilot_cc.cc     \
+        ftw_pnc_ofdm_pilot_cc.cc \
 	ftw_ofdm_preamble.cc     \
 	ftw_repetition.cc        \
 	ftw_zerogap.cc
