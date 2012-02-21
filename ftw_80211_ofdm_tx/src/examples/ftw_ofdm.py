@@ -101,7 +101,11 @@ class ofdm_mod(gr.hier_block2):
         self._pkt_input = ftw.ofdm_mapper(rotated_const, msgq_limit, self._data_subcarriers, self._fft_length)
         
         # insert pilot symbols
-        self.pilot = ftw.ofdm_pilot_cc(self._data_subcarriers)
+#        self.pilot = ftw.ofdm_pilot_cc(self._data_subcarriers)
+        self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 0)
+        # just for test
+        #self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 1)
+        #self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 2)
 	
         # move subcarriers to their designated place and insert DC  
         self.cmap  = ftw.ofdm_cmap_cc(self._fft_length, self._total_sub_carriers)        
@@ -195,11 +199,15 @@ class ofdm_mod(gr.hier_block2):
 	    N_sym             = info["N_sym"]
 
 	    (pkt,Length) = ofdm_packet_utils.ftw_make(payload,self._regime, self._symbol_time)
-	    (pkt_scrambled,Length) = ofdm_packet_utils.scrambler(pkt,Length)			
-	    pkt_coded = ofdm_packet_utils.conv_encoder(pkt_scrambled, Length, self._regime, N_cbps, N_bpsc, N_sym, N_rate)	
+	    (pkt_scrambled,Length) = ofdm_packet_utils.scrambler(pkt,Length)	
+#            print
+#            print conv_packed_binary_string_to_1_0_string(pkt_scrambled)	
+	    pkt_coded = ofdm_packet_utils.conv_encoder(pkt_scrambled, Length, self._regime, N_cbps, N_bpsc, N_sym, N_rate)
+#            print
+#            print conv_packed_binary_string_to_1_0_string(pkt_coded)
 	    pkt_interleaved = ofdm_packet_utils.interleaver(pkt_coded , self._regime, N_cbps, N_bpsc)
-            print
-            print conv_packed_binary_string_to_1_0_string(pkt_interleaved)
+#            print
+#            print conv_packed_binary_string_to_1_0_string(pkt_interleaved)
 	    msg = gr.message_from_string(pkt_interleaved) 
 
         self._pkt_input.msgq().insert_tail(msg)

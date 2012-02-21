@@ -185,12 +185,12 @@ def ftw_make(payload, regime, symboltime):
 	PLCP_HEADER = SIGNAL_FIELD + SERVICE
 	
 	MPDU = make_MPDU (packet)
- #       print string_to_hex_list(MPDU)	
+ #       print string_to_hex_list(MPDU)
 	
 	MPDU_with_crc32 = gen_and_append_crc32(MPDU , packet) 
 
 	Length = len(MPDU_with_crc32)
-
+        '''
         print conv_packed_binary_string_to_1_0_string(PLCP_HEADER), len(PLCP_HEADER)
         print string_to_hex_list(PLCP_HEADER)
         print
@@ -199,7 +199,8 @@ def ftw_make(payload, regime, symboltime):
         print
         print conv_packed_binary_string_to_1_0_string(TAIL_and_PAD), len(TAIL_and_PAD)
 	print string_to_hex_list(TAIL_and_PAD)
-
+        '''
+        #print "len(PLCP) = ", len(PLCP_HEADER), "len(MPDU+CRC32) = ", len(MPDU_with_crc32), "len(TAIL_PAD) = ", len(TAIL_and_PAD)
 	return PLCP_HEADER + MPDU_with_crc32 + TAIL_and_PAD , Length
 
 
@@ -354,10 +355,11 @@ def scrambler(pkt, Length_data):
 	# Start from 24 because SIGNAL symbol mustn't be scrambled
 	for k in range (24 , len(app)):              
 		scrambled.append(str(int(app[k])^(scrambling_seq[(k-24) % 127])))
-	
-	# Force six bit to "0" in return to 0 state at last
+
+	# Force six bit to "0" in return to 0 state at last (this is tail bits, not set by scrambler * by lzyou)
 	for i in range (23 + zero_forcing_index +17 , 23 + zero_forcing_index + 22 + 1):
 		scrambled[i] = '0'
+#        print zero_forcing_index, len(app)
 
 	scrambled = "".join(scrambled)
 
@@ -368,14 +370,28 @@ def gen_and_append_crc32(MPDU, packet_for_crc):
 	crc = ftw.ftw_crc32(packet_for_crc)
 	return MPDU + struct.pack(">I", hexint(crc) & 0xFFFFFFFF)
 
-def insert_preamble(length, N_sym):
+def insert_preamble(length, N_sym, role=None):
 	ftw_preamble= [list(fft_preamble)]
-	preamble = ftw.ofdm_preamble(length, N_sym, ftw_preamble)
+        if role == 'A':
+            print "NORMAL: FPNC *A* Insert Zerogap"
+	    preamble = ftw.pnc_ofdm_preamble(length, N_sym, ftw_preamble, 1)
+        elif role == 'B':
+            print "NORMAL: FPNC *B* Insert Zerogap"
+	    preamble = ftw.pnc_ofdm_preamble(length, N_sym, ftw_preamble, 2)
+        else:
+            print "DEBUG or ERROR: FTW Insert Preamble"
+	    preamble = ftw.ofdm_preamble(length, N_sym, ftw_preamble)
+
 	return preamble 
 
-def insert_zerogap(length, N_sym):
+def insert_zerogap(length, N_sym, debug=True):
 	gap = [list(gap_sample)]
-	ftw_zerogap = ftw.zerogap(length, N_sym, gap)
+        if debug:
+            print "DEBUG: FTW Insert Zerogap"
+	    ftw_zerogap = ftw.zerogap(length, N_sym, gap)
+        else:
+            print "NORMAL: FPNC Insert Zerogap"
+            ftw_zerogap = ftw.pnc_zerogap(length, N_sym, gap)
 	return ftw_zerogap
 
 def qam16(self):

@@ -49,6 +49,7 @@ from gnuradio import gr, blks2, eng_notation
 from gnuradio.eng_option import eng_option
 from optparse import OptionParser
 from ftw_ofdm import ftw_transmit_path
+from ftw_pnc_ofdm import ftw_pnc_transmit_path
 
 # from current dir
 from uhd_interface import uhd_transmitter
@@ -78,7 +79,12 @@ class my_top_block(gr.top_block):
 
         # do this after for any adjustments to the options that may
         # occur in the sinks (specifically the UHD sink)
-        self.txpath = ftw_transmit_path(options, payload)
+        if options.debug:
+            print "DEBUG: Using FTW Setup"
+            self.txpath = ftw_transmit_path(options, payload)
+        else:
+            print "NORMAL: Using FPNC Setup"
+            self.txpath = ftw_pnc_transmit_path(options, payload)
         self.connect(self.txpath, self.sink)
 	
    
@@ -116,6 +122,7 @@ def main():
     parser.add_option("-s","--swapIQ", action="store_true", default=False, help="swap IQ components before sending to USRP2 sink [default=%default]")  
     parser.add_option("-v", "--verbose", action="store_true", default=False)
     parser.add_option("-l", "--log", action="store_true", default=False, help="write debug-output of individual blocks to disk")
+    parser.add_option("-d", "--debug", action="store_true", default=False, help="FTW or FPNC mode")
 
     parser.add_option("-W", "--bandwidth", type="eng_float",
                       default=500e3,
@@ -139,6 +146,9 @@ def main():
     parser.add_option("-r", "--repetition", type="int", default=1 , help="set number of frame-copies to send, 0=infinite [default=%default] ")
 
     parser.add_option("-p", "--payload", type="string", default="HelloWorld",
+                          help="payload ASCII-string to send, [default=%default]")
+
+    parser.add_option("-R", "--role", type="string", default=None,
                           help="payload ASCII-string to send, [default=%default]")
     
 #    parser.add_option("-i", "--interp", type="intx", default=5,
