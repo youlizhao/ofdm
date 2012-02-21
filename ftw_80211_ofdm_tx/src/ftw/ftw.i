@@ -29,8 +29,10 @@
 #include "ftw_ofdm_pilot_cc.h"
 #include "ftw_pnc_ofdm_pilot_cc.h"
 #include "ftw_ofdm_preamble.h"
+#include "ftw_pnc_ofdm_preamble.h"
 #include "ftw_repetition.h"
 #include "ftw_zerogap.h"
+#include "ftw_pnc_zerogap.h"
 %}
 
 // ----------------------------------------------------------------
@@ -85,6 +87,22 @@ class ftw_ofdm_preamble : public gr_block
 			  const std::vector<std::vector<gr_complex> > &preamble);
 };
 
+//-----------------------------------------------------------------
+
+GR_SWIG_BLOCK_MAGIC(ftw,pnc_ofdm_preamble);
+
+ftw_pnc_ofdm_preamble_sptr
+ftw_make_pnc_ofdm_preamble(int fft_length, int N_symbols,
+			     const std::vector<std::vector<gr_complex> > &preamble, int user);
+
+
+class ftw_pnc_ofdm_preamble : public gr_block
+{
+ protected:
+  ftw_pnc_ofdm_preamble(int fft_length, int N_symbols,
+			  const std::vector<std::vector<gr_complex> > &preamble, int user);
+};
+
 //----------------------------------------------------------------------
 
 GR_SWIG_BLOCK_MAGIC(ftw,zerogap);
@@ -97,9 +115,26 @@ ftw_make_zerogap(int symbol_length, int N_symbols,
 class ftw_zerogap : public gr_block
 {
  protected:
-  ftw_zerogap(int fft_length, N_symbols,
+  ftw_zerogap(int fft_length, int N_symbols,
 			  const std::vector<std::vector<gr_complex> > &zerogap);
 };
+
+//----------------------------------------------------------------------
+
+GR_SWIG_BLOCK_MAGIC(ftw,pnc_zerogap);
+
+ftw_pnc_zerogap_sptr
+ftw_make_pnc_zerogap(int symbol_length, int N_symbols,
+			     const std::vector<std::vector<gr_complex> > &zerogap);
+
+
+class ftw_pnc_zerogap : public gr_block
+{
+ protected:
+  ftw_pnc_zerogap(int fft_length, int N_symbols,
+			  const std::vector<std::vector<gr_complex> > &zerogap);
+};
+
 
 //----------------------------------------------------------------------
 

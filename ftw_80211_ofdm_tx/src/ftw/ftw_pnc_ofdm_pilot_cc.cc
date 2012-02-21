@@ -124,8 +124,12 @@ ftw_pnc_ofdm_pilot_cc::general_work (int noutput_items,
 //*************************************************added by taotao
   gr_complex polarity[4]={1,0,1,0};
 
-  if(d_user != 1)
+  if(d_user != 1)         // for user two 
      polarity={0,1,0,1};
+
+  if(d_user == 0)
+     polarity={1,1,1,1};  // do not use polarity, but fill all pilots
+
 //*************************************************    
 
   while (count < noutput_items) {
