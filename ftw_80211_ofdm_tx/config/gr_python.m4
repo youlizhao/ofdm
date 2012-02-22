@@ -49,6 +49,22 @@ AC_DEFUN([PYTHON_DEVEL],[
 		    if  (echo $pyexecdir | grep -q lib64); then
 			    pythondir="$pyexecdir"
 		    fi
+	    else
+		# Let Python tell us where the install directory is;
+		# i.e., don't trust AM_PATH_PYTHON
+		python_cmd='
+import distutils.sysconfig
+import os
+path = distutils.sysconfig.get_python_lib()
+pypath = distutils.sysconfig.get_config_var("exec_prefix")
+path = path.split(pypath)[[1]]
+if os.sep == "\\":
+  path = path.replace("\\", "/")
+print path
+'
+		pyexecdir=$prefix`$PYTHON -c "$python_cmd"`
+		pythondir=$pyexecdir
+		
 	    fi
 
 	    # Check for Python include path
@@ -123,6 +139,52 @@ print path
 	      ;;
 	    esac
 
+	    case $host_os in
+		 *mingw* )
+	      # Python 2.5 requires ".pyd" instead of ".dll" for extensions
+	      PYTHON_LDFLAGS="-shrext .pyd ${PYTHON_LDFLAGS}"
+	    esac
+
 	    AC_SUBST(PYTHON_LDFLAGS)
 	fi
+])
+
+# PYTHON_CHECK_MODULE
+#
+# Determines if a particular Python module can be imported
+#
+# $1 - module name
+# $2 - module description
+# $3 - action if found
+# $4 - action if not found
+# $5 - test command
+
+AC_DEFUN([PYTHON_CHECK_MODULE],[
+    AC_MSG_CHECKING([for $2])
+    dnl ########################################
+    dnl # import and test checking
+    dnl ########################################
+    if test "$5"; then
+        python_cmd='
+try:
+    import $1
+    assert $5
+except ImportError, AssertionError: exit(1)
+except: pass'
+    dnl ########################################
+    dnl # import checking only
+    dnl ########################################
+    else
+        python_cmd='
+try: import $1
+except ImportError: exit(1)
+except: pass'
+    fi
+    if ! $PYTHON -c "$python_cmd" 2> /dev/null; then
+        AC_MSG_RESULT([no])
+        $4
+    else
+        AC_MSG_RESULT([yes])
+        $3
+    fi
 ])
