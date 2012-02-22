@@ -370,28 +370,23 @@ def gen_and_append_crc32(MPDU, packet_for_crc):
 	crc = ftw.ftw_crc32(packet_for_crc)
 	return MPDU + struct.pack(">I", hexint(crc) & 0xFFFFFFFF)
 
-def insert_preamble(length, N_sym, role=None):
+def insert_preamble(length, N_sym, role=0):
 	ftw_preamble= [list(fft_preamble)]
-        if role == 'A':
-            print "NORMAL: FPNC *A* Insert Zerogap"
+        if role == 1:
 	    preamble = ftw.pnc_ofdm_preamble(length, N_sym, ftw_preamble, 1)
-        elif role == 'B':
-            print "NORMAL: FPNC *B* Insert Zerogap"
+        elif role == 2:
 	    preamble = ftw.pnc_ofdm_preamble(length, N_sym, ftw_preamble, 2)
         else:
-            print "DEBUG or ERROR: FTW Insert Preamble"
 	    preamble = ftw.ofdm_preamble(length, N_sym, ftw_preamble)
 
 	return preamble 
 
-def insert_zerogap(length, N_sym, debug=True):
+def insert_zerogap(length, N_sym, state="FTW"):
 	gap = [list(gap_sample)]
-        if debug:
-            print "DEBUG: FTW Insert Zerogap"
-	    ftw_zerogap = ftw.zerogap(length, N_sym, gap)
-        else:
-            print "NORMAL: FPNC Insert Zerogap"
+        if state == "FPNC":
             ftw_zerogap = ftw.pnc_zerogap(length, N_sym, gap)
+        else:
+	    ftw_zerogap = ftw.zerogap(length, N_sym, gap)
 	return ftw_zerogap
 
 def qam16(self):

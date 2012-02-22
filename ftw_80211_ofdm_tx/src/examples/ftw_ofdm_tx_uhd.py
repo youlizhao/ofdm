@@ -79,12 +79,9 @@ class my_top_block(gr.top_block):
 
         # do this after for any adjustments to the options that may
         # occur in the sinks (specifically the UHD sink)
-        if options.debug:
-            print "DEBUG: Using FTW Setup"
-            self.txpath = ftw_transmit_path(options, payload)
-        else:
-            print "NORMAL: Using FPNC Setup"
-            self.txpath = ftw_pnc_transmit_path(options, payload)
+        self.txpath = ftw_transmit_path(options, payload)
+
+        # self.txpath = ftw_pnc_transmit_path(options, payload)
         self.connect(self.txpath, self.sink)
 	
    
@@ -122,7 +119,6 @@ def main():
     parser.add_option("-s","--swapIQ", action="store_true", default=False, help="swap IQ components before sending to USRP2 sink [default=%default]")  
     parser.add_option("-v", "--verbose", action="store_true", default=False)
     parser.add_option("-l", "--log", action="store_true", default=False, help="write debug-output of individual blocks to disk")
-    parser.add_option("-d", "--debug", action="store_true", default=False, help="FTW or FPNC mode")
 
     parser.add_option("-W", "--bandwidth", type="eng_float",
                       default=500e3,
@@ -143,7 +139,7 @@ def main():
 
     parser.add_option("-n", "--norm", type="eng_float", default=0.3 , help="set gain factor for complex baseband floats [default=%default]")
 
-    parser.add_option("-r", "--repetition", type="int", default=1 , help="set number of frame-copies to send, 0=infinite [default=%default] ")
+    parser.add_option("-N", "--num", type="int", default=1 , help="set number of packets to send, [default=%default] ")
 
     parser.add_option("-p", "--payload", type="string", default="HelloWorld",
                           help="payload ASCII-string to send, [default=%default]")
@@ -168,19 +164,12 @@ def main():
 
 #    parser.add_option("-g", "--gain", type="int", default=10 , help = "set USRP2 Tx GAIN in [dB] [default=%default]")
 		
-#      
 
-#    parser.add_option("-l", "--log", action="store_true", default=False, help="write debug-output of individual blocks to disk")
-
-#    parser.add_option("-p", "--payload", type="string", default="HelloWorld",
-#                          help="payload ASCII-string to send, [default=%default]")
-	
     (options, args) = parser.parse_args ()
 
     # This is the ASCII encoded message that will be put into the MSDU (you have to build IP headers on your own if you need them!)
     # Use monitor (promiscuous) mode on the receiver side to see this kind of non-IP frame.
     my_msg = options.payload
-    #my_msg = 'A'*1500;
 
     # build the graph    
     tb = my_top_block(options, my_msg)
@@ -194,9 +183,8 @@ def main():
 
     # send frame        
     counter = 0
-    while counter < 1:
+    while counter < options.num:
        send_pkt(my_msg , eof = False)
-       time.sleep(4)
        counter = counter + 1
 
     print "End of Transmission"

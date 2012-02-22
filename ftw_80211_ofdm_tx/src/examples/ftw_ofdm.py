@@ -77,6 +77,7 @@ class ofdm_mod(gr.hier_block2):
 	self._cp_length           = 16
  	self._regime              = options.regime
 	self._symbol_length       = self._fft_length + self._cp_length
+        self._role                = options.role
 	
 	# assuming we have 100Ms/s going to the USRP2 and 80 samples per symbol
 	# we can calculate the OFDM symboltime (in microseconds) 
@@ -100,9 +101,16 @@ class ofdm_mod(gr.hier_block2):
         # map groups of bits to complex symbols
         self._pkt_input = ftw.ofdm_mapper(rotated_const, msgq_limit, self._data_subcarriers, self._fft_length)
         
-        # insert pilot symbols
-#        self.pilot = ftw.ofdm_pilot_cc(self._data_subcarriers)
-        self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 0)
+        # insert pilot symbols (use pnc block * by lzyou)
+        if self._role == 'A':
+            print " >>> [FPNC]: *A* Insert Zerogap"
+            self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 1)
+        elif self._role == 'B':
+            print " >>> [FPNC]: *B* Insert Zerogap"
+            self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 2)
+        else:
+            print " >>> [FTW ]: Insert Pilot"
+            self.pilot = ftw.ofdm_pilot_cc(self._data_subcarriers)
         # just for test
         #self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 1)
         #self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 2)
@@ -124,14 +132,24 @@ class ofdm_mod(gr.hier_block2):
 	info = ofdm_packet_utils.get_info(payload, options.regime, self._symbol_time)	
 	N_sym             = info["N_sym"]
 	
-	# add training sequence
-        self.preamble= ofdm_packet_utils.insert_preamble(self._symbol_length, N_sym)
+	# add training sequence (modify by lzyou)
+        if self._role == 'A':
+            print " >>> [FPNC]: *A* Insert Preamble"
+            self.preamble= ofdm_packet_utils.insert_preamble(self._symbol_length, N_sym, 'A')
+        elif self._role == 'B':
+            print " >>> [FPNC]: *B* Insert Preamble"
+            self.preamble= ofdm_packet_utils.insert_preamble(self._symbol_length, N_sym, 'B')
+        else:
+            print " >>> [FTW ]: Insert Preamble"
+            self.preamble= ofdm_packet_utils.insert_preamble(self._symbol_length, N_sym)        
 
         # append zero samples at the end (receiver needs that to decode)
-	self.zerogap    = ofdm_packet_utils.insert_zerogap(self._symbol_length, N_sym)
-        
-        # repeat the frame a number of times 
-        self.repeat = ftw.repetition(80, options.repetition, N_sym)
+        if self._role == None:
+            print " >>> [FTW ]: Insert Zerogap"
+	    self.zerogap    = ofdm_packet_utils.insert_zerogap(self._symbol_length, N_sym)
+        else:
+            print " >>> [FPNC]: Insert Zerogap"
+            self.zerogap    = ofdm_packet_utils.insert_zerogap(self._symbol_length, N_sym, 'FPNC')
 
 	self.s2v = gr.stream_to_vector(gr.sizeof_gr_complex , self._symbol_length)
 	self.v2s = gr.vector_to_stream(gr.sizeof_gr_complex , self._symbol_length)
@@ -161,16 +179,7 @@ class ofdm_mod(gr.hier_block2):
 	self.connect((self._pkt_input,1), (self.preamble, 1))
 	self.connect((self.preamble,1), (self.zerogap, 1))
 	
-	#if options.repetition == 1:
-	#	self.connect(self.pilot, self.cmap, self.ifft, self.cp_adder, self.scale, self.s2v, \
-        #	self.preamble, self.zerogap, self.v2s)
-                
-	#elif options.repetition > 1:
-#	self.connect(self.pilot, self.cmap, self.ifft, self.cp_adder, self.scale, self.s2v, self.preamble, self.zerogap, self.repeat, self.v2s)
 	self.connect(self.pilot, self.cmap, self.ifft, self.cp_adder, self.scale, self.s2v, self.preamble, self.zerogap, self.v2s)
-	#else:
-	#	print"Error: repetiton must be a integer number >= 1 \n"
-	#	sys.exit(1)
 
         if options.log:
             self.connect((self._pkt_input), gr.file_sink(gr.sizeof_gr_complex * self._data_subcarriers, "ofdm_mapper.dat"))
