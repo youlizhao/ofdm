@@ -40,7 +40,7 @@ class ofdm_receiver(gr.hier_block2):
     (Van de Beeks).
     """
 
-    def __init__(self, fft_length, cp_length, occupied_tones, snr, ks, logging=False):
+    def __init__(self, bandwidth, fft_length, cp_length, occupied_tones, snr, ks, logging=False):
         """
 	Hierarchical block for receiving OFDM symbols.
 
@@ -121,7 +121,7 @@ class ofdm_receiver(gr.hier_block2):
 
         self.nco = gr.frequency_modulator_fc(nco_sensitivity)         # generate a signal proportional to frequency error of sync block
         self.sigmix = gr.multiply_cc()
-        self.sampler = digital_swig.ofdm_sampler(fft_length, fft_length+cp_length)
+        self.sampler = digital_swig.ofdm_sampler(fft_length, fft_length+cp_length, long(bandwidth))
         self.fft_demod = gr.fft_vcc(fft_length, True, win, True)
         self.ofdm_frame_acq = digital_swig.ofdm_frame_acquisition(occupied_tones,
                                                                   fft_length,

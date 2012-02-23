@@ -118,7 +118,8 @@ def make_packet(payload, samples_per_symbol, bits_per_symbol,
         raise ValueError, "whitener_offset must be between 0 and 15, inclusive (%i)" % (whitener_offset,)
 
     payload_with_crc = crc.gen_and_append_crc32(payload)
-    #print "outbound crc =", string_to_hex_list(payload_with_crc[-4:])
+#    print "pkt =", string_to_hex_list(payload)
+#    print "outbound crc =", string_to_hex_list(payload_with_crc[-4:])
 
     L = len(payload_with_crc)
     MAXLEN = len(random_mask_tuple)

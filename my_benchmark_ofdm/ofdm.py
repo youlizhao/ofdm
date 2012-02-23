@@ -73,9 +73,8 @@ class ofdm_mod(gr.hier_block2):
 
         # hard-coded known symbols
         preambles = (ksfreq,)
-                
-#	print preambles
 
+#	print preambles
         padded_preambles = list()
         for pre in preambles:
             padded = self._fft_length*[0,]
@@ -210,6 +209,7 @@ class ofdm_demod(gr.hier_block2):
         self._occupied_tones = options.occupied_tones
         self._cp_length = options.cp_length
         self._snr = options.snr
+        self._bandwidth = options.bandwidth
 
         # Use freq domain to get doubled-up known symbol for correlation in time domain
         zeros_on_left = int(math.ceil((self._fft_length - self._occupied_tones)/2.0))
@@ -222,7 +222,8 @@ class ofdm_demod(gr.hier_block2):
         preambles = (ksfreq,)
 
         symbol_length = self._fft_length + self._cp_length
-        self.ofdm_recv = ofdm_receiver(self._fft_length,
+        self.ofdm_recv = ofdm_receiver(self._bandwidth,
+                                       self._fft_length,
                                        self._cp_length,
                                        self._occupied_tones,
                                        self._snr, preambles,

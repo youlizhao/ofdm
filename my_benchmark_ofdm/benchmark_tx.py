@@ -74,6 +74,8 @@ def main():
                       help="set packet size [default=%default]")
     parser.add_option("-M", "--megabytes", type="eng_float", default=1.0,
                       help="set megabytes to transmit [default=%default]")
+    parser.add_option("-o", "--test", action="store_true",
+                      default=False)
     parser.add_option("","--discontinuous", action="store_true", default=False,
                       help="enable discontinuous mode")
     parser.add_option("","--from-file", default=None,
@@ -117,7 +119,11 @@ def main():
         if options.discontinuous:
             time.sleep(1)
         pktno += 1
-        
+
+        if options.test:
+            break
+
+    time.sleep(2)
     send_pkt(eof=True)
     
     tb.wait()                       # wait for it to finish

@@ -159,7 +159,7 @@ def main():
         (pktno,) = struct.unpack('!H', payload[0:2])
         if ok:
             n_right += 1
-        print "timestamp: %f \t ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (secs+frac_secs, ok, pktno, n_rcvd, n_right)
+#        print "timestamp: %f \t ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (secs+frac_secs, ok, pktno, n_rcvd, n_right)
 
         if 0:
             printlst = list()
@@ -181,7 +181,7 @@ def main():
     expert_grp = parser.add_option_group("Expert")
 
     # for tx and rx
-    parser.add_option("-s", "--size", type="eng_float", default=400,
+    parser.add_option("-s", "--size", type="eng_float", default=40,
                       help="set packet size [default=%default]")
     parser.add_option("-M", "--megabytes", type="eng_float", default=1.0,
                       help="set megabytes to transmit [default=%default]")
@@ -190,6 +190,8 @@ def main():
     parser.add_option("-v", "--verbose", action="store_true",
                       default=False)
     parser.add_option("-d", "--debug", action="store_true",
+                      default=False)
+    parser.add_option("-o", "--test", action="store_true",
                       default=False)
     parser.add_option("", "--log", action="store_true",
                       default=False,
@@ -255,7 +257,10 @@ def main():
         print "Warning: failed to enable realtime scheduling"
 
     tb.start()                      # start flow graph
-    time.sleep(5)		    # setup all blocks
+    time.sleep(2)		    # setup all blocks
+    print "\n"
+    print " === Block Start === "
+    print "\n"
 
     ###########################################################################
 
@@ -280,8 +285,15 @@ def main():
         if options.discontinuous and pktno % 5 == 4:
             time.sleep(1)
         pktno += 1
+        time.sleep(0.2)
+        if pktno == 100:
+            break
+
+        if options.test:
+            break
         
     send_pkt(eof=True)
+    print "End of Tx"
     """
     
     counter = 1
