@@ -7,7 +7,7 @@
 #define INCLUDED_RAW_CRC_H
 
 #include <gr_sync_block.h>
-#include <gr_crc32.h>
+#include <digital_crc32.h>
 #include <vector>
 
 class raw_crc_enc;
