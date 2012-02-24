@@ -1,0 +1,7 @@
+./makelinks.sh ${GNURADIO}/gr-howto-write-a-block
+./bootstrap
+export CFLAGS="-march=native -mtune=native -O3 -pipe"
+export CXXFLAGS="-march=native -mtune=native -O3 -pipe"
+./configure
+make install
+
