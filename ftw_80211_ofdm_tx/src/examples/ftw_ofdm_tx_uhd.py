@@ -49,7 +49,6 @@ from gnuradio import gr, blks2, eng_notation
 from gnuradio.eng_option import eng_option
 from optparse import OptionParser
 from ftw_ofdm import ftw_transmit_path
-from ftw_pnc_ofdm import ftw_pnc_transmit_path
 
 # from current dir
 from uhd_interface import uhd_transmitter
@@ -68,12 +67,6 @@ class my_top_block(gr.top_block):
             self.sink = gr.file_sink(gr.sizeof_gr_complex, options.to_file)
         else:
             self.sink = gr.null_sink(gr.sizeof_gr_complex)
-
-#        self._interface          = options.interface       # logical network interface
-#        self._mac_addr           = options.mac_addr        # MAC address
-#        self._tx_freq            = options.freq            # center frequency
-#        self._interp             = options.interp          # interpolation factor
-#        self._gain               = options.gain            # Tx gain
 
 	options.interp	= 100e6/options.bandwidth	# FTW-specific convertion
 
@@ -101,21 +94,6 @@ def main():
                       help="use intput file for packet contents")
     parser.add_option("","--to-file", default=None,
                       help="Output file for modulated samples")
-
-    # to make options compatible with FTW, we add options here 
-    # instead of adding uhd_transmitter options
-    parser.add_option("-a", "--args", type="string", default="",
-                      help="UHD device address args [default=%default]")
-    parser.add_option("", "--spec", type="string", default=None,
-                      help="Subdevice of UHD device where appropriate")
-    parser.add_option("-A", "--antenna", type="string", default=None,
-                      help="select Rx Antenna where appropriate")
-    parser.add_option("", "--tx-freq", type="eng_float", default=None,
-                      help="set transmit frequency to FREQ [default=%default]",
-                      metavar="FREQ")
-    parser.add_option("", "--tx-gain", type="eng_float", default=None,
-                      help="set transmit gain in dB (default is midpoint)")
-
     parser.add_option("-s","--swapIQ", action="store_true", default=False, help="swap IQ components before sending to USRP2 sink [default=%default]")  
     parser.add_option("-v", "--verbose", action="store_true", default=False)
     parser.add_option("-l", "--log", action="store_true", default=False, help="write debug-output of individual blocks to disk")
@@ -146,24 +124,7 @@ def main():
 
     parser.add_option("-R", "--role", type="string", default=None,
                           help="payload ASCII-string to send, [default=%default]")
-    
-#    parser.add_option("-i", "--interp", type="intx", default=5,
-#                          help="set USRP2 interpolation factor, [default=%default]\
-#				5  -> 802.11a/g, OFDM-symbolduration=4us, \
-#				10 -> 802.11p, OFDM-symbolduration=8us")
-
-#    parser.add_option("-e", "--interface", type="string", default="eth0",
-#                          help="set ethernet interface, [default=%default]")
-
-#    parser.add_option("-m", "--mac-addr", type="string", default="",
-#                          help="set USRP2 MAC address, [default=auto-select]")
-
-#    parser.add_option("-f", "--freq", type="eng_float",
-#                          default = 2.412e9, help="set USRP2 carrier frequency, [default=%default]",
-#                          metavar="FREQ")
-
-#    parser.add_option("-g", "--gain", type="int", default=10 , help = "set USRP2 Tx GAIN in [dB] [default=%default]")
-		
+    uhd_transmitter.add_options(parser)
 
     (options, args) = parser.parse_args ()
 

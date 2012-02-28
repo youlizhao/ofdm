@@ -185,7 +185,7 @@ def ftw_make(payload, regime, symboltime):
 	PLCP_HEADER = SIGNAL_FIELD + SERVICE
 	
 	MPDU = make_MPDU (packet)
- #       print string_to_hex_list(MPDU)
+        #print string_to_hex_list(MPDU)
 	
 	MPDU_with_crc32 = gen_and_append_crc32(MPDU , packet) 
 
@@ -370,21 +370,22 @@ def gen_and_append_crc32(MPDU, packet_for_crc):
 	crc = ftw.ftw_crc32(packet_for_crc)
 	return MPDU + struct.pack(">I", hexint(crc) & 0xFFFFFFFF)
 
-def insert_preamble(length, N_sym, role=0):
+def insert_preamble(length, N_sym, role=None):
 	ftw_preamble= [list(fft_preamble)]
-        if role == 1:
+        if role == 'A':
 	    preamble = ftw.pnc_ofdm_preamble(length, N_sym, ftw_preamble, 1)
-        elif role == 2:
+        elif role == 'B':
 	    preamble = ftw.pnc_ofdm_preamble(length, N_sym, ftw_preamble, 2)
         else:
 	    preamble = ftw.ofdm_preamble(length, N_sym, ftw_preamble)
 
 	return preamble 
 
-def insert_zerogap(length, N_sym, state="FTW"):
+def insert_zerogap(length, N_sym, state='FTW'):
 	gap = [list(gap_sample)]
-        if state == "FPNC":
+        if state == 'FPNC':
             ftw_zerogap = ftw.pnc_zerogap(length, N_sym, gap)
+#            ftw_zerogap = ftw.zerogap(length, N_sym, gap)
         else:
 	    ftw_zerogap = ftw.zerogap(length, N_sym, gap)
 	return ftw_zerogap
