@@ -48,7 +48,7 @@ class my_top_block(gr.top_block):
                                        options.bandwidth,
                                        options.rx_freq, options.rx_gain,
                                        options.spec, options.antenna,
-                                       options.verbose)
+                                       options.external, options.verbose)
         elif(options.from_file is not None):
             self.source = gr.file_source(gr.sizeof_gr_complex, options.from_file)
         else:
@@ -73,13 +73,13 @@ def main():
     n_rcvd = 0
     n_right = 0
 
-    def rx_callback(ok, payload, secs, frac_secs):
+    def rx_callback(ok, payload, secs, frac_secs, cfo):
         global n_rcvd, n_right
         n_rcvd += 1
         (pktno,) = struct.unpack('!H', payload[0:2])
         if ok:
             n_right += 1
-        print "timestamp: %f \t ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (secs+frac_secs, ok, pktno, n_rcvd, n_right)
+        print "timestamp: %f \t ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d \t cfo: %f" % (secs+frac_secs, ok, pktno, n_rcvd, n_right, cfo)
 
         if 0:
             printlst = list()
@@ -96,6 +96,8 @@ def main():
     parser = OptionParser(option_class=eng_option, conflict_handler="resolve")
     expert_grp = parser.add_option_group("Expert")
     parser.add_option("","--discontinuous", action="store_true", default=False,
+                      help="enable discontinuous")
+    parser.add_option("","--external", action="store_true", default=False,
                       help="enable discontinuous")
     parser.add_option("","--from-file", default=None,
                       help="input file of samples to demod")

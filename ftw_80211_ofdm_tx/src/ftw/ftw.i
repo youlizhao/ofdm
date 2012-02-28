@@ -33,6 +33,8 @@
 #include "ftw_repetition.h"
 #include "ftw_zerogap.h"
 #include "ftw_pnc_zerogap.h"
+#include "ftw_pnc_sample_and_hold_ff.h"
+#include "ftw_pnc_frequency_modulator_fc.h"
 %}
 
 // ----------------------------------------------------------------
@@ -177,6 +179,37 @@ class ftw_ofdm_mapper : public gr_sync_block
 	   gr_vector_void_star &output_items);
 };
 
+//-----------------------------------------------------------------
+
+GR_SWIG_BLOCK_MAGIC(ftw,pnc_frequency_modulator_fc)
+
+ftw_pnc_frequency_modulator_fc_sptr ftw_make_pnc_frequency_modulator_fc (double sensitivity);
+
+class ftw_pnc_frequency_modulator_fc : public gr_sync_block
+{
+ private:
+  ftw_pnc_frequency_modulator_fc (double sensitivity);
+ public:
+  void set_sensitivity(float sens) { d_sensitivity = sens; }
+  float sensitivity() const { return d_sensitivity; }
+  void set_value(float value) { d_value = value; d_phase = 0; }
+  float value() const { return d_value; }
+};
+
+//-----------------------------------------------------------------
+/**
+GR_SWIG_BLOCK_MAGIC(ftw,pnc_sample_and_hold_ff)
+
+ftw_pnc_sample_and_hold_ff_sptr ftw_make_pnc_sample_and_hold_ff ();
+
+class ftw_pnc_sample_and_hold_ff : public gr_sync_block
+{
+ private:
+  ftw_pnc_sample_and_hold_ff ();
+ public:
+  void set_data(float data) { d_data = data; }
+};
+*/
 //-----------------------------------------------------------------
 
 unsigned int ftw_update_crc32(unsigned int crc, const unsigned char *data, size_t len);

@@ -9,7 +9,7 @@ from gnuradio import eng_notation
 from gnuradio.eng_option import eng_option
 from optparse import OptionParser
 
-import usrp2
+from uhd_interface import uhd_transmitter
 import ofdm_rxtx
 
 
@@ -23,8 +23,12 @@ class my_top_block(gr.top_block):
   def __init__(self, options):
     gr.top_block.__init__(self)
 
-    if options.freq is not None:
-      u = usrp2.sink(options)
+    if options.tx_freq is not None:
+      u = uhd_transmitter(options.args,
+                          options.bandwidth,
+                          options.tx_freq, options.tx_gain,
+                          options.spec, options.antenna,
+                          options.external, options.verbose)
     elif options.outfile is not None:
       u = gr.file_sink(gr.sizeof_gr_complex, options.outfile)
     else:
@@ -73,9 +77,12 @@ class my_top_block(gr.top_block):
                       help="set transmitter digital amplifier: [default=%default]")
     normal.add_option("-v", "--verbose", action="store_true", default=False)
     normal.add_option("", "--repeat", action="store_true", default=False)
+    normal.add_option("-W", "--bandwidth", type="eng_float",
+                          default=500e3,
+                          help="set symbol bandwidth [default=%default]")
     expert.add_option("", "--log", action="store_true", default=False,
                       help="Log all parts of flow graph to files (CAUTION: lots of data)")
-    usrp2.add_options(normal)
+    uhd_transmitter.add_options(normal)
     ofdm_rxtx.TX.add_options(normal, expert)
     ofdm_rxtx.sender_thread.add_options(normal)
   # Make a static method to call before instantiation

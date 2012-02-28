@@ -210,6 +210,7 @@ class ofdm_demod(gr.hier_block2):
         self._cp_length = options.cp_length
         self._snr = options.snr
         self._bandwidth = options.bandwidth
+        self._precoding = False #options.precoding
 
         # Use freq domain to get doubled-up known symbol for correlation in time domain
         zeros_on_left = int(math.ceil((self._fft_length - self._occupied_tones)/2.0))
@@ -227,7 +228,7 @@ class ofdm_demod(gr.hier_block2):
                                        self._cp_length,
                                        self._occupied_tones,
                                        self._snr, preambles,
-                                       options.log)
+                                       options.log) #, options.precoding)
 
         mods = {"bpsk": 2, "qpsk": 4, "8psk": 8, "qam8": 8, "qam16": 16, "qam64": 64, "qam256": 256}
         arity = mods[self._modulation]
@@ -255,6 +256,8 @@ class ofdm_demod(gr.hier_block2):
         self.connect(self, self.ofdm_recv)
         self.connect((self.ofdm_recv, 0), (self.ofdm_demod, 0))
         self.connect((self.ofdm_recv, 1), (self.ofdm_demod, 1))
+        if self._precoding:
+            self.connect((self.ofdm_recv, 2), (self.ofdm_demod, 2))    # output CFO value
 
         # added output signature to work around bug, though it might not be a bad
         # thing to export, anyway
@@ -324,8 +327,11 @@ class _queue_watcher_thread(_threading.Thread):
 		frac_secs=0
 		#print ".... PKT NO TIMESTAMP"
             ok, payload = ofdm_packet_utils.unmake_packet(msg.to_string())
+            cfo = 0
+            if msg.cfo_valid():
+                cfo = msg.cfo_value()
             if self.callback:
-                self.callback(ok, payload,secs,frac_secs)
+                self.callback(ok, payload,secs,frac_secs,cfo)
 
 # Generating known symbols with:
 # i = [2*random.randint(0,1)-1 for i in range(4512)]

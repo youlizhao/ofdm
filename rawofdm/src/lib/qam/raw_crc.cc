@@ -9,7 +9,7 @@
 
 #include <raw_crc.h>
 #include <gr_io_signature.h>
-#include <string.h>
+#include <string.h> 
 
 raw_crc_enc_sptr
  raw_make_crc_enc (unsigned length) {
@@ -33,7 +33,7 @@ int raw_crc_enc::work (int noutput_items,
 
   for (unsigned i = 0; i < noutput_items; ++i) {
     memcpy(out, in, d_length);
-    *(uint32_t *)(out+d_length) = digital_crc32(in, d_length);
+    *(uint32_t *)(out+d_length) = gr_crc32(in, d_length);
 
     in+= d_length;
     out+= d_length + sizeof(uint32_t);
@@ -68,7 +68,7 @@ raw_crc_dec::general_work(int noutput_items,
   int nproduced = 0;
   while ((nconsumed < ninput) && (nproduced < noutput_items)) {
     uint32_t check = *(uint32_t *)(in + d_length);
-    if (check == digital_crc32(in, d_length)) {
+    if (check == gr_crc32(in, d_length)) {
       memcpy(out, in, d_length);
       out+= d_length;
       ++nconsumed;

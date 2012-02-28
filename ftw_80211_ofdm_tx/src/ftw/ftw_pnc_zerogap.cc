@@ -47,7 +47,7 @@ ftw_pnc_zerogap::ftw_pnc_zerogap(int symbol_length, int N_symbols,
   d_nsymbols_output(0),
   d_pending_flag(0)
 {
-  set_output_multiple(d_N_symbols + 7);   // (320 samples + 160 samples training sequences + 80 samples first signal ofdm symbol = 400)--> 400 / 80 = 5
+  set_output_multiple(d_N_symbols + 7);   // (320 samples + 160 samples training sequences + 80 samples first signal ofdm symbol = 400)--> 560 / 80 = 7
   enter_idle();
 }
 

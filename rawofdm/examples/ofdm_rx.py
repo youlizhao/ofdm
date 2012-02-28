@@ -12,6 +12,8 @@ from optparse import OptionParser
 import usrp2
 import ofdm_rxtx
 
+from uhd_interface import uhd_receiver
+
 class my_top_block(gr.top_block):
   """
     Three modes of operation:
@@ -22,8 +24,12 @@ class my_top_block(gr.top_block):
   def __init__(self, options):
     gr.top_block.__init__(self)
 
-    if options.freq is not None:
-      u = usrp2.source(options)
+    if options.rx_freq is not None:
+      u = uhd_receiver(options.args,
+                       options.bandwidth,
+                       options.rx_freq, options.rx_gain,
+                       options.spec, options.antenna,
+                       options.verbose)
     elif options.infile is not None:
       u = gr.file_source(gr.sizeof_gr_complex, options.infile)
     else:
@@ -105,9 +111,13 @@ class my_top_block(gr.top_block):
     normal.add_option("", "--snrmode", type="int", default=0,
                       help="0 - per symbol, 1 - per packet, 2 - per bin [default=%default]")
     normal.add_option("-v", "--verbose", action="store_true", default=False)
+    normal.add_option("-W", "--bandwidth", type="eng_float",
+                          default=500e3,
+                          help="set symbol bandwidth [default=%default]")
     expert.add_option("", "--log", action="store_true", default=False,
                       help="Log all parts of flow graph to files (CAUTION: lots of data)")
-    usrp2.add_options(normal)
+    uhd_receiver.add_options(normal)
+    #usrp2.add_options(normal)
     ofdm_rxtx.RX.add_options(normal, expert)
   # Make a static method to call before instantiation
   add_options = staticmethod(add_options)

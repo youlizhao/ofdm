@@ -6,6 +6,7 @@
 
 import math
 from gnuradio import gr
+from gnuradio import digital
 
 # local:
 import raw_swig as raw
@@ -41,9 +42,9 @@ class ofdm_mod(gr.hier_block2):
     # see gr_fft_vcc_fftw that it works differently if win = [1 1 1 ...]
 
     self.mapper = raw.ofdm_mapper(params.padded_carriers)
-    self.preambles = gr.ofdm_insert_preamble(params.fft_length, params.padded_preambles)
+    self.preambles = digital.ofdm_insert_preamble(params.fft_length, params.padded_preambles)
     self.ifft = gr.fft_vcc(params.fft_length, False, win, True)
-    self.cp_adder = gr.ofdm_cyclic_prefixer(params.fft_length, params.fft_length + params.cp_length)
+    self.cp_adder = digital.ofdm_cyclic_prefixer(params.fft_length, params.fft_length + params.cp_length)
     self.scale = gr.multiply_const_cc(1.0 / math.sqrt(params.fft_length))
 
     self.connect((self,0), self.mapper, (self.preambles,0))

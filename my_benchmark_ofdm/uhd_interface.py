@@ -43,7 +43,7 @@ def add_freq_option(parser):
 
 class uhd_interface:
     def __init__(self, istx, args, bandwidth, freq=None,
-                 gain=None, spec=None, antenna=None):
+                 gain=None, spec=None, antenna=None, external=False):
         
         if(istx):
             self.u = uhd.usrp_sink(device_addr=args, stream_args=uhd.stream_args('fc32'))
@@ -57,10 +57,16 @@ class uhd_interface:
         # Set the antenna
         if(antenna):
             self.u.set_antenna(antenna, 0)
+
+        # Set ref clock
+        if(external):
+            self.u.set_clock_source("external", 0)
+            self.u.set_time_source("external", 0)
         
         self._args = args
         self._ant  = antenna
         self._spec = spec
+        self._external = external
         self._gain = self.set_gain(gain)
         self._freq = self.set_freq(freq)
 
@@ -107,14 +113,14 @@ class uhd_interface:
 
 class uhd_transmitter(uhd_interface, gr.hier_block2):
     def __init__(self, args, bandwidth, freq=None, gain=None,
-                 spec=None, antenna=None, verbose=False):
+                 spec=None, antenna=None, external=False, verbose=False):
         gr.hier_block2.__init__(self, "uhd_transmitter",
                                 gr.io_signature(1,1,gr.sizeof_gr_complex),
                                 gr.io_signature(0,0,0))
 
         # Set up the UHD interface as a transmitter
         uhd_interface.__init__(self, True, args, bandwidth,
-                               freq, gain, spec, antenna)
+                               freq, gain, spec, antenna, external)
 
         self.connect(self, self.u)
 
@@ -134,7 +140,10 @@ class uhd_transmitter(uhd_interface, gr.hier_block2):
                           metavar="FREQ")
         parser.add_option("", "--tx-gain", type="eng_float", default=None,
                           help="set transmit gain in dB (default is midpoint)")
-        parser.add_option("-v", "--verbose", action="store_true", default=False)
+        parser.add_option("","--external", action="store_true", default=False,
+                          help="enable discontinuous")
+        if not parser.has_option("--verbose"):
+            parser.add_option("-v", "--verbose", action="store_true", default=False)
 
     # Make a static method to call before instantiation
     add_options = staticmethod(add_options)
@@ -150,10 +159,13 @@ class uhd_transmitter(uhd_interface, gr.hier_block2):
         print "Sample Rate: %ssps" % (eng_notation.num_to_str(self._rate))
         print "Antenna:     %s"    % (self._ant)
         print "Subdev Sec:  %s"    % (self._spec)
+        if self._external:
+            print "\n Using External Clock and PPS \n"
 
+    # New Function: return usrp time
     def get_usrp_time(self):
-	time = self.u.get_time_now()
-	return time.get_real_secs(), time.get_frac_secs()
+        time = self.u.get_time_now()
+        return time.get_real_secs(), time.get_frac_secs()
 
 #-------------------------------------------------------------------#
 #   RECEIVER
@@ -162,14 +174,14 @@ class uhd_transmitter(uhd_interface, gr.hier_block2):
 
 class uhd_receiver(uhd_interface, gr.hier_block2):
     def __init__(self, args, bandwidth, freq=None, gain=None,
-                 spec=None, antenna=None, verbose=False):
+                 spec=None, antenna=None, external=False, verbose=False):
         gr.hier_block2.__init__(self, "uhd_receiver",
                                 gr.io_signature(0,0,0),
                                 gr.io_signature(1,1,gr.sizeof_gr_complex))
       
         # Set up the UHD interface as a receiver
         uhd_interface.__init__(self, False, args, bandwidth,
-                               freq, gain, spec, antenna)
+                               freq, gain, spec, antenna, external)
 
         self.connect(self.u, self)
 
@@ -189,6 +201,8 @@ class uhd_receiver(uhd_interface, gr.hier_block2):
                           metavar="FREQ")
         parser.add_option("", "--rx-gain", type="eng_float", default=None,
                           help="set receive gain in dB (default is midpoint)")
+        parser.add_option("","--external", action="store_true", default=False,
+                          help="enable discontinuous")
         if not parser.has_option("--verbose"):
             parser.add_option("-v", "--verbose", action="store_true", default=False)
 
@@ -206,7 +220,10 @@ class uhd_receiver(uhd_interface, gr.hier_block2):
         print "Sample Rate: %ssps" % (eng_notation.num_to_str(self._rate))
         print "Antenna:     %s"    % (self._ant)
         print "Subdev Sec:  %s"    % (self._spec)
+        if self._external:
+            print "\n Using External Clock and PPS \n"
 
+    # New Function: return usrp time
     def get_usrp_time(self):
-	time = self.u.get_time_now()
-	return time.get_real_secs(), time.get_frac_secs()
+        time = self.u.get_time_now()
+        return time.get_real_secs(), time.get_frac_secs()

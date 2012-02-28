@@ -25,7 +25,7 @@ from numpy import fft
 from gnuradio import gr
 
 class ofdm_sync_pn(gr.hier_block2):
-    def __init__(self, fft_length, cp_length, logging=False):
+    def __init__(self, fft_length, cp_length, logging=False, precoding=False):
         """
         OFDM synchronization using PN Correlation:
         T. M. Schmidl and D. C. Cox, "Robust Frequency and Timing
@@ -110,8 +110,11 @@ class ofdm_sync_pn(gr.hier_block2):
         # Set output signals
         #    Output 0: fine frequency correction value
         #    Output 1: timing signal
+        #    Output 2: [option] carrier freuqency offset value (by lzyou)
         self.connect(self.sample_and_hold, (self,0))
         self.connect(self.pk_detect, (self,1))
+        if precoding:
+            self.connect(self.angle, (self,2))
 
         if logging:
             self.connect(self.matched_filter, gr.file_sink(gr.sizeof_float, "ofdm_sync_pn-mf_f.dat"))

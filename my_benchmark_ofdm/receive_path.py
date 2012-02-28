@@ -57,6 +57,8 @@ class receive_path(gr.hier_block2):
 
         self.connect(self, self.ofdm_rx)
         self.connect(self.ofdm_rx, self.probe)
+#        if options.precoding:
+#            self.connect((self.ofdm_rx,1), (self,0))  # output CFO value
 
         # Display some information about the setup
         if self._verbose:

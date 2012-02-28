@@ -61,7 +61,7 @@ class my_top_block(gr.top_block):
         # Set up receive path
         # do this after for any adjustments to the options that may
         # occur in the sinks (specifically the UHD sink)
-        self.rxpath = receive_path(callback, options)
+        # self.rxpath = receive_path(callback, options)
 
         
 	## Tx Side ###
@@ -134,26 +134,7 @@ def main():
     n_rcvd = 0
     n_right = 0
 
-#    def rx_callback(ok, payload):
-#        global n_rcvd, n_right
-#        n_rcvd += 1
-#        (pktno,) = struct.unpack('!H', payload[0:2])
-#        if ok:
-#            n_right += 1
-#        print "ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d" % (ok, pktno, n_rcvd, n_right)
-
-#        if 0:
-#            printlst = list()
-#            for x in payload[2:]:
-#                t = hex(ord(x)).replace('0x', '')
-#                if(len(t) == 1):
-#                    t = '0' + t
-#                printlst.append(t)
-#            printable = ''.join(printlst)
-
-#            print printable
-#            print "\n"
-    def rx_callback(ok, payload, secs, frac_secs):
+    def rx_callback(ok, payload, secs, frac_secs, cfo):
         global n_rcvd, n_right
         n_rcvd += 1
         (pktno,) = struct.unpack('!H', payload[0:2])
@@ -285,15 +266,15 @@ def main():
         if options.discontinuous and pktno % 5 == 4:
             time.sleep(1)
         pktno += 1
-        time.sleep(0.2)
-        if pktno == 100:
+        time.sleep(0.3)
+        if pktno == 10:
             break
 
         if options.test:
             break
         
     send_pkt(eof=True)
-    print "End of Tx"
+    print "End of Tx | pktno = ", pktno
     """
     
     counter = 1

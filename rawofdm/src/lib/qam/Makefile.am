@@ -11,7 +11,8 @@ modinclude_HEADERS = \
         raw_intrlv.h \
         raw_rs.h \
         raw_scrambler_bb.h \
-        raw_crc.h
+        raw_crc.h \
+        gr_crc32.h
 
 noinst_LTLIBRARIES = libraw-qam.la
 
@@ -21,8 +22,10 @@ libraw_qam_la_SOURCES =  \
         raw_intrlv.cc \
         raw_rs.cc \
         raw_scrambler_bb.cc \
-        raw_crc.cc
+        raw_crc.cc \
+        gr_crc32.cc
 
 libraw_qam_la_LIBADD = \
-        $(GNURADIO_CORE_LA)
+        $(GNURADIO_CORE_LA) \
+        $(GR_DIGITAL_LA)
 

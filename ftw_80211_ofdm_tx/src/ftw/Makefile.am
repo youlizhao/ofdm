@@ -32,7 +32,8 @@ grinclude_HEADERS =             \
         ftw_pnc_ofdm_preamble.h \
 	ftw_repetition.h        \
 	ftw_zerogap.h           \
-        ftw_pnc_zerogap.h
+        ftw_pnc_zerogap.h       \
+        ftw_pnc_frequency_modulator_fc.h
 
 ###################################
 # SWIG Python interface and library
@@ -62,7 +63,8 @@ ftw_la_swig_sources =          \
         ftw_pnc_ofdm_preamble.cc \
 	ftw_repetition.cc        \
 	ftw_zerogap.cc           \
-        ftw_pnc_zerogap.cc
+        ftw_pnc_zerogap.cc       \
+        ftw_pnc_frequency_modulator_fc.cc
 
 # additional arguments to the SWIG command
 #ftw_la_swig_args =		\
