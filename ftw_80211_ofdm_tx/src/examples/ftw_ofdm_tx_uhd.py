@@ -72,10 +72,21 @@ class my_top_block(gr.top_block):
 
         # do this after for any adjustments to the options that may
         # occur in the sinks (specifically the UHD sink)
-        self.txpath = ftw_transmit_path(options, payload)
+        if(options.from_file is None):
+            self.txpath = ftw_transmit_path(options, payload)    
+        else:
+            self.txpath = gr.file_source(gr.sizeof_gr_complex, options.from_file);
+            options.tx_amplitude = 1
+
+        # static value to make sure we do not exceed +-1 for the floats being sent to the sink
+	self._tx_amplitude = options.tx_amplitude        
+	self.amp = gr.multiply_const_cc(self._tx_amplitude)
 
         # self.txpath = ftw_pnc_transmit_path(options, payload)
-        self.connect(self.txpath, self.sink)
+        self.connect(self.txpath, self.amp, self.sink)
+
+        if options.log:
+            self.connect(self.amp, gr.file_sink(gr.sizeof_gr_complex, 'ftw_benchmark.dat'))
 	
    
 # /////////////////////////////////////////////////////////////////////////////
@@ -115,7 +126,7 @@ def main():
 						7 -> 48 (24) Mbit/s (QAM64 r=0.66), \
 						8 -> 54 (27) Mbit/s (QAM64 r=0.75)")
 
-    parser.add_option("-n", "--norm", type="eng_float", default=0.3 , help="set gain factor for complex baseband floats [default=%default]")
+    parser.add_option("", "--tx-amplitude", type="eng_float", default=0.3 , help="set gain factor for complex baseband floats [default=%default]")
 
     parser.add_option("-N", "--num", type="int", default=1 , help="set number of packets to send, [default=%default] ")
 
@@ -142,14 +153,15 @@ def main():
     # start flow graph
     tb.start()
 
-    # send frame        
-    counter = 0
-    while counter < options.num:
-       send_pkt(my_msg , eof = False)
-       counter = counter + 1
+    if(options.from_file is None):
+       # send frame        
+       counter = 0
+       while counter < options.num:
+          send_pkt(my_msg , eof = False)
+          counter = counter + 1
 
-    print "End of Transmission"
-    send_pkt(eof = True)
+       print "End of Transmission"
+       send_pkt(eof = True)
 
     # wait for it to finish
     tb.wait()                   

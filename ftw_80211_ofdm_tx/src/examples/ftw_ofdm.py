@@ -35,12 +35,8 @@ class ftw_transmit_path(gr.hier_block2):
 	# the modulator itself
 	self.ofdm_tx       = ofdm_mod(options, payload, msgq_limit=2, pad_for_usrp=False)
 
-	# static value to make sure we do not exceed +-1 for the floats being sent to the sink
-	self._norm         = options.norm        
-	self.amp = gr.multiply_const_cc(self._norm)
-
         # setup basic connections
-        self.connect(self.ofdm_tx, self.amp, self)
+        self.connect(self.ofdm_tx, self)
         
     def send_pkt(self, payload='', eof=False):
         return self.ofdm_tx.send_pkt(payload, eof)
@@ -124,6 +120,7 @@ class ofdm_mod(gr.hier_block2):
         # add cyclic prefix
 	from gnuradio import digital
         self.cp_adder = digital.ofdm_cyclic_prefixer(self._fft_length, self._symbol_length)
+        self.connect(gr.null_source(gr.sizeof_char), (self.cp_adder, 1))  # Note: dirty modification to accomdate the API change
         
         # scale accordingly
         self.scale = gr.multiply_const_cc(1.0 / math.sqrt(self._fft_length))
