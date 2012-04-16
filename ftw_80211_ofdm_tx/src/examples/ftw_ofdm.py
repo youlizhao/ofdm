@@ -99,10 +99,10 @@ class ofdm_mod(gr.hier_block2):
         
         # insert pilot symbols (use pnc block * by lzyou)
         if self._role == 'A':
-            print " >>> [FPNC]: *A* Insert Zerogap"
+            print " >>> [FPNC]: *A* Insert Pilot"
             self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 1)
         elif self._role == 'B':
-            print " >>> [FPNC]: *B* Insert Zerogap"
+            print " >>> [FPNC]: *B* Insert Pilot"
             self.pilot = ftw.pnc_ofdm_pilot_cc(self._data_subcarriers, 2)
         else:
             print " >>> [FTW ]: Insert Pilot"

@@ -76,7 +76,7 @@ class my_top_block(gr.top_block):
             self.txpath = ftw_transmit_path(options, payload)    
         else:
             self.txpath = gr.file_source(gr.sizeof_gr_complex, options.from_file);
-            options.tx_amplitude = 1
+#            options.tx_amplitude = 1
 
         # static value to make sure we do not exceed +-1 for the floats being sent to the sink
 	self._tx_amplitude = options.tx_amplitude        
@@ -86,7 +86,7 @@ class my_top_block(gr.top_block):
         self.connect(self.txpath, self.amp, self.sink)
 
         if options.log:
-            self.connect(self.amp, gr.file_sink(gr.sizeof_gr_complex, 'ftw_benchmark.dat'))
+            self.connect(self.txpath, gr.file_sink(gr.sizeof_gr_complex, 'ftw_benchmark.dat'))
 	
    
 # /////////////////////////////////////////////////////////////////////////////
@@ -129,8 +129,9 @@ def main():
     parser.add_option("", "--tx-amplitude", type="eng_float", default=0.3 , help="set gain factor for complex baseband floats [default=%default]")
 
     parser.add_option("-N", "--num", type="int", default=1 , help="set number of packets to send, [default=%default] ")
+    parser.add_option("-r", "--repeat", type="int", default=1 , help="set number of HelloWorld in single packet to send, [default=%default] ")
 
-    parser.add_option("-p", "--payload", type="string", default="HelloWorld",
+    parser.add_option("-p", "--payload", type="string", default=None,
                           help="payload ASCII-string to send, [default=%default]")
 
     parser.add_option("-R", "--role", type="string", default=None,
@@ -138,6 +139,13 @@ def main():
     uhd_transmitter.add_options(parser)
 
     (options, args) = parser.parse_args ()
+
+    if options.role == 'A':
+        options.payload = "HelloWorld"*options.repeat
+    elif options.role == 'B':
+        options.payload = "WorldHello"*options.repeat
+    else:
+        options.payload = "HelloWorld"*options.repeat
 
     # This is the ASCII encoded message that will be put into the MSDU (you have to build IP headers on your own if you need them!)
     # Use monitor (promiscuous) mode on the receiver side to see this kind of non-IP frame.

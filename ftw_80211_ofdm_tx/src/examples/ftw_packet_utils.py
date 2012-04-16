@@ -188,7 +188,7 @@ def ftw_make(payload, regime, symboltime):
         #print string_to_hex_list(MPDU)
 	
 	MPDU_with_crc32 = gen_and_append_crc32(MPDU , packet) 
-        print string_to_hex_list(MPDU_with_crc32)
+        #print string_to_hex_list(MPDU_with_crc32)
 
 	Length = len(MPDU_with_crc32)
         '''
