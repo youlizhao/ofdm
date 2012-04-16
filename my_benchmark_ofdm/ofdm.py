@@ -111,10 +111,14 @@ class ofdm_mod(gr.hier_block2):
         self.cp_adder = digital_swig.ofdm_cyclic_prefixer(self._fft_length,
                                                           symbol_length)
         self.scale = gr.multiply_const_cc(1.0 / math.sqrt(self._fft_length))
-        
+        self.v2s = gr.vector_to_stream(gr.sizeof_gr_complex, self._fft_length+self._cp_length)
         self.connect((self._pkt_input, 0), (self.preambles, 0))
         self.connect((self._pkt_input, 1), (self.preambles, 1))
-        self.connect(self.preambles, self.ifft, self.cp_adder, self.scale, self)
+        self.connect((self._pkt_input, 2), (self.preambles, 2))
+        self.connect(self.preambles, self.ifft, self.cp_adder)
+        self.connect((self.preambles, 1), gr.null_sink(gr.sizeof_char))
+        self.connect((self.preambles, 2), (self.cp_adder, 1))
+        self.connect(self.cp_adder, self.scale, self)
         
         if options.verbose:
             self._print_verbage()
@@ -124,12 +128,13 @@ class ofdm_mod(gr.hier_block2):
                                                        "ofdm_mapper_c.dat"))
             self.connect(self.preambles, gr.file_sink(gr.sizeof_gr_complex*options.fft_length,
                                                       "ofdm_preambles.dat"))
+            self.connect((self.preambles, 2), gr.file_sink(gr.sizeof_char, "ofdm_preambles_debug.dat"))
             self.connect(self.ifft, gr.file_sink(gr.sizeof_gr_complex*options.fft_length,
                                                  "ofdm_ifft_c.dat"))
             self.connect(self.cp_adder, gr.file_sink(gr.sizeof_gr_complex,
                                                      "ofdm_cp_adder_c.dat"))
 
-    def send_pkt(self, payload='', eof=False, timestamp=False, secs=0, frac_secs=0):
+    def send_pkt(self, payload='', eof=False, time_flag=False, time=0):
         """
         Send the payload.
 
@@ -146,8 +151,8 @@ class ofdm_mod(gr.hier_block2):
             
             #print "pkt =", string_to_hex_list(pkt)
             msg = gr.message_from_string(pkt)
-            if timestamp:
-                msg.set_timestamp(long(secs), frac_secs)
+            if time_flag:
+                msg.set_timestamp(long(time), time-long(time))
         self._pkt_input.msgq().insert_tail(msg)
 
     def add_options(normal, expert):
@@ -228,7 +233,7 @@ class ofdm_demod(gr.hier_block2):
                                        self._cp_length,
                                        self._occupied_tones,
                                        self._snr, preambles,
-                                       options.log) #, options.precoding)
+                                       options.log, options.mode)
 
         mods = {"bpsk": 2, "qpsk": 4, "8psk": 8, "qam8": 8, "qam16": 16, "qam64": 64, "qam256": 256}
         arity = mods[self._modulation]
@@ -327,6 +332,7 @@ class _queue_watcher_thread(_threading.Thread):
 		frac_secs=0
 		#print ".... PKT NO TIMESTAMP"
             ok, payload = ofdm_packet_utils.unmake_packet(msg.to_string())
+	    #print len(payload)
             cfo = 0
             if msg.cfo_valid():
                 cfo = msg.cfo_value()

@@ -40,7 +40,7 @@ class ofdm_receiver(gr.hier_block2):
     (Van de Beeks).
     """
 
-    def __init__(self, bandwidth, fft_length, cp_length, occupied_tones, snr, ks, logging=False, precoding=False):
+    def __init__(self, bandwidth, fft_length, cp_length, occupied_tones, snr, ks, logging=False, mode='benchmark'):
         """
 	Hierarchical block for receiving OFDM symbols.
 
@@ -97,7 +97,7 @@ class ofdm_receiver(gr.hier_block2):
             nco_sensitivity = -2.0/fft_length   # correct for fine frequency
             self.ofdm_sync = ofdm_sync_pn(fft_length,
                                           cp_length,
-                                          logging, precoding)
+                                          logging, mode)
         elif SYNC == "pnac":
             nco_sensitivity = -2.0/fft_length   # correct for fine frequency
             self.ofdm_sync = ofdm_sync_pnac(fft_length,
@@ -139,8 +139,9 @@ class ofdm_receiver(gr.hier_block2):
         self.connect((self.sampler,1), (self.ofdm_frame_acq,1))       # send timing signal to signal frame start
         self.connect((self.ofdm_frame_acq,0), (self,0))               # finished with fine/coarse freq correction,
         self.connect((self.ofdm_frame_acq,1), (self,1))               # frame and symbol timing, and equalization
-        if precoding:
-            self.connect((self.ofdm_sync,2), (self,2))                    # carrier frequency offset value (by lzyou)
+
+        # for debugging
+        self.connect(self.chan_filt, gr.file_sink(gr.sizeof_gr_complex, "ofdm_receiver-chan_filt_c.dat"))
 
         if logging:
             self.connect(self.chan_filt, gr.file_sink(gr.sizeof_gr_complex, "ofdm_receiver-chan_filt_c.dat"))

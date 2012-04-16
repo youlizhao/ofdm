@@ -68,11 +68,11 @@ class transmit_path(gr.hier_block2):
         self._tx_amplitude = max(0.0, min(ampl, 1))
         self.amp.set_k(self._tx_amplitude)
         
-    def send_pkt(self, payload='', eof=False, timestamp=False, secs=0, frac_secs=0):
+    def send_pkt(self, payload='', eof=False, time_flag=False, time=0):
         """
         Calls the transmitter method to send a packet
         """
-        return self.ofdm_tx.send_pkt(payload, eof, timestamp, secs, frac_secs)
+        return self.ofdm_tx.send_pkt(payload, eof, time_flag, time)
         
     def add_options(normal, expert):
         """

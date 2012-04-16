@@ -48,7 +48,7 @@ class my_top_block(gr.top_block):
                                        options.bandwidth,
                                        options.rx_freq, options.rx_gain,
                                        options.spec, options.antenna,
-                                       options.external, options.verbose)
+                                       options.verbose, options.external)
         elif(options.from_file is not None):
             self.source = gr.file_source(gr.sizeof_gr_complex, options.from_file)
         else:
@@ -60,6 +60,9 @@ class my_top_block(gr.top_block):
         self.rxpath = receive_path(callback, options)
 
         self.connect(self.source, self.rxpath)
+
+        if options.log:
+            self.connect(self.source, gr.file_sink(gr.sizeof_gr_complex, 'rx_benchmark.dat'))
         
 
 # /////////////////////////////////////////////////////////////////////////////
@@ -77,11 +80,11 @@ def main():
         global n_rcvd, n_right
         n_rcvd += 1
         (pktno,) = struct.unpack('!H', payload[0:2])
+        #pktno = 0
         if ok:
             n_right += 1
         print "timestamp: %f \t ok: %r \t pktno: %d \t n_rcvd: %d \t n_right: %d \t cfo: %f" % (secs+frac_secs, ok, pktno, n_rcvd, n_right, cfo)
-
-        if 0:
+        if 1:
             printlst = list()
             for x in payload[2:]:
                 t = hex(ord(x)).replace('0x', '')
@@ -101,6 +104,11 @@ def main():
                       help="enable discontinuous")
     parser.add_option("","--from-file", default=None,
                       help="input file of samples to demod")
+    parser.add_option("", "--log", action="store_true",
+                      default=False,
+                      help="Log all parts of flow graph to file (CAUTION: lots of data)")
+    parser.add_option("", "--mode", type="string", default='benchmark',
+                          help="Mode of OFDM_SYNC_PN: benchmark or fpnc")
 
     receive_path.add_options(parser, expert_grp)
     uhd_receiver.add_options(parser)

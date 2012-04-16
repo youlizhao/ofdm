@@ -47,7 +47,7 @@ class my_top_block(gr.top_block):
                                         options.bandwidth,
                                         options.tx_freq, options.tx_gain,
                                         options.spec, options.antenna,
-                                        options.external, options.verbose)
+                                        options.verbose, options.external)
         elif(options.to_file is not None):
             self.sink = gr.file_sink(gr.sizeof_gr_complex, options.to_file)
         else:

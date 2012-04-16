@@ -25,7 +25,7 @@ from numpy import fft
 from gnuradio import gr
 
 class ofdm_sync_pn(gr.hier_block2):
-    def __init__(self, fft_length, cp_length, logging=False, precoding=False):
+    def __init__(self, fft_length, cp_length, logging=False, mode='benchmark'):
         """
         OFDM synchronization using PN Correlation:
         T. M. Schmidl and D. C. Cox, "Robust Frequency and Timing
@@ -42,7 +42,10 @@ class ofdm_sync_pn(gr.hier_block2):
         # PN Sync
 
         # Create a delay line
-        self.delay = gr.delay(gr.sizeof_gr_complex, fft_length/2)
+        if mode == 'fpnc':
+            self.delay = gr.delay(gr.sizeof_gr_complex, fft_length) # design for PNC system
+        else:
+            self.delay = gr.delay(gr.sizeof_gr_complex, fft_length/2)
 
         # Correlation from ML Sync
         self.conjg = gr.conjugate_cc();
@@ -50,7 +53,11 @@ class ofdm_sync_pn(gr.hier_block2):
 
         # Create a moving sum filter for the corr output
         if 1:
-            moving_sum_taps = [1.0 for i in range(fft_length//2)]
+            if mode == 'fpnc':
+                moving_sum_taps = [1.0 for i in range(fft_length)]  # design for PNC system
+            else:
+                moving_sum_taps = [1.0 for i in range(fft_length//2)]
+
             self.moving_sum_filter = gr.fir_filter_ccf(1,moving_sum_taps)
         else:
             moving_sum_taps = [complex(1.0,0.0) for i in range(fft_length//2)]
@@ -58,7 +65,11 @@ class ofdm_sync_pn(gr.hier_block2):
 
         # Create a moving sum filter for the input
         self.inputmag2 = gr.complex_to_mag_squared()
-        movingsum2_taps = [1.0 for i in range(fft_length//2)]
+
+        if mode == 'fpnc':
+            movingsum2_taps = [1.0 for i in range(fft_length)]      # design for PNC system
+        else:
+            movingsum2_taps = [1.0 for i in range(fft_length//2)]
 
         if 1:
             self.inputmovingsum = gr.fir_filter_fff(1,movingsum2_taps)
@@ -99,7 +110,11 @@ class ofdm_sync_pn(gr.hier_block2):
         self.connect(self.c2mag, (self.normalize,0))
 
         # Create a moving sum filter for the corr output
-        matched_filter_taps = [1.0/cp_length for i in range(cp_length)]
+        if mode == 'fpnc':
+            matched_filter_taps = [1.0/(cp_length*2) for i in range(cp_length*2)]       # design for PNC system
+        else:
+            matched_filter_taps = [1.0/cp_length for i in range(cp_length)]
+
         self.matched_filter = gr.fir_filter_fff(1,matched_filter_taps)
         self.connect(self.normalize, self.matched_filter)
         
@@ -113,13 +128,16 @@ class ofdm_sync_pn(gr.hier_block2):
         #    Output 2: [option] carrier freuqency offset value (by lzyou)
         self.connect(self.sample_and_hold, (self,0))
         self.connect(self.pk_detect, (self,1))
-        if precoding:
-            self.connect(self.angle, (self,2))
 
         if logging:
+            self.connect(self.delay, gr.file_sink(gr.sizeof_gr_complex, 'ofdm_sync_pn-delay.dat'))
+            self.connect(self.corr, gr.file_sink(gr.sizeof_gr_complex, 'ofdm_sync_pn-corr_c.dat'))
+            self.connect(self.moving_sum_filter, gr.file_sink(gr.sizeof_gr_complex, "ofdm_sync_pn-mvs_c.dat"))
+            self.connect(self.c2mag, gr.file_sink(gr.sizeof_float, "ofdm_sync_pn-ms_f.dat"))
             self.connect(self.matched_filter, gr.file_sink(gr.sizeof_float, "ofdm_sync_pn-mf_f.dat"))
             self.connect(self.normalize, gr.file_sink(gr.sizeof_float, "ofdm_sync_pn-theta_f.dat"))
             self.connect(self.angle, gr.file_sink(gr.sizeof_float, "ofdm_sync_pn-epsilon_f.dat"))
+            self.connect(self.sub1, gr.file_sink(gr.sizeof_float, 'ofdm_sync_pn-sub_1.dat'))
             self.connect(self.pk_detect, gr.file_sink(gr.sizeof_char, "ofdm_sync_pn-peaks_b.dat"))
             self.connect(self.sample_and_hold, gr.file_sink(gr.sizeof_float, "ofdm_sync_pn-sample_and_hold_f.dat"))
             self.connect(self.input, gr.file_sink(gr.sizeof_gr_complex, "ofdm_sync_pn-input_c.dat"))

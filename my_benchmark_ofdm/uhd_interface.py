@@ -113,7 +113,7 @@ class uhd_interface:
 
 class uhd_transmitter(uhd_interface, gr.hier_block2):
     def __init__(self, args, bandwidth, freq=None, gain=None,
-                 spec=None, antenna=None, external=False, verbose=False):
+                 spec=None, antenna=None, verbose=False, external=False):
         gr.hier_block2.__init__(self, "uhd_transmitter",
                                 gr.io_signature(1,1,gr.sizeof_gr_complex),
                                 gr.io_signature(0,0,0))
@@ -174,7 +174,7 @@ class uhd_transmitter(uhd_interface, gr.hier_block2):
 
 class uhd_receiver(uhd_interface, gr.hier_block2):
     def __init__(self, args, bandwidth, freq=None, gain=None,
-                 spec=None, antenna=None, external=False, verbose=False):
+                 spec=None, antenna=None, verbose=False, external=False):
         gr.hier_block2.__init__(self, "uhd_receiver",
                                 gr.io_signature(0,0,0),
                                 gr.io_signature(1,1,gr.sizeof_gr_complex))
